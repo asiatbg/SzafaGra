@@ -45,7 +45,7 @@ body {
     background: rgba(255, 255, 255, 0.41);
     
 }
-#email {
+#txtEmail {
     border: none;
     transition: opacity 0.3s;
     position: absolute;
@@ -59,7 +59,7 @@ body {
     color: #FFFFFF;
 }
 
-#password {
+#txtPassword {
     border: none;
     transition: opacity 0.3s;
     position: absolute;
@@ -154,7 +154,7 @@ input:focus {
 }
 
 .fb {
-    background: #3a5a98;
+    background: #3B5998;
     color: white;
     position: absolute;
     width: 250px;
@@ -167,8 +167,9 @@ input:focus {
     border-radius: 50px;
     opacity: 0.8;
     transition: opacity 0.3s;
-    
+    cursor: pointer;
 }
+
 
 .g {
     background: #dc4437;
