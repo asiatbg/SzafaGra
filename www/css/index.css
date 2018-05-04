@@ -289,16 +289,33 @@ label {
 
     color: #FFFFFF;
 }
-/*gdzieś uciekły*/
-.input-icon {
-    position: relative;
+/*icons*/
+.fa-envelope {
+    position: absolute;
     color: white;
-    left: calc(50% - 230px/2 - 0.5px);
-    top: calc(50% - 50px/2 - 105.5px); /*jeszcze cza od góry wymyślić*/
+    left: calc(50% - 225px/2 - 0.5px);
+	top: calc(50% - 49px/2 + 85px);
     margin-bottom: 43px;
     vertical-align: middle;
     display:table-cell;
-
+}
+.fa-lock {
+    position: absolute;
+    color: white;
+    left: calc(50% - 225px/2 - 0.5px);
+	top: calc(50% - 49px/2 + 146px);
+    margin-bottom: 43px;
+    vertical-align: middle;
+    display:table-cell;
+}
+#falock {
+    position: absolute;
+    color: white;
+    left: calc(50% - 225px/2 - 0.5px);
+	top: calc(50% - 49px/2 + 208px);
+    margin-bottom: 43px;
+    vertical-align: middle;
+    display:table-cell;
 }
 
 /*hamburger*/
@@ -352,6 +369,18 @@ label {
   transition: all .5s;/*outline: 1px solid green*/
     
 }
+#logout {
+	color: white;
+	margin-left: 17px; 
+	cursor: pointer;
+}
+b:hover{
+	margin-bottom: 5px;
+	padding-left: .5em;
+	-webkit-transition: all .5s;
+	-o-transition: all .5s;
+	transition: all .5s;
+}
 
 /*FIN MENU*/
 /*Posicion Responsive Menu*/
@@ -369,7 +398,7 @@ label {
   -webkit-transition: all .3s;
   -o-transition: all .3s;
   transition: all .3s;
-    text-shadow: 0px 0px 20px rgba(0, 0, 0, 0.25);
+  text-shadow: 0px 0px 20px rgba(0, 0, 0, 0.25);
     
 }
 
@@ -548,4 +577,3 @@ p {
     text-align: center;
     color: #786D6D;
 }
-
