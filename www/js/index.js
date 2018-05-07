@@ -417,9 +417,9 @@ $(document).ready(function () {
     };
     var newInput = function () {
         var div = $("<div/>", {
-            "class": "input-group"
+            "class": "input-group styled-select oneline"
         });
-        var input = $("<select><option>Select</option><option>1</option><option> 2</option></select>", {
+        var input = $("<select><option>Select</option><option>Rain</option><option>Thunderstorm</option><option>Drizzle</option><option>Snow</option><option>Clear</option><option>Clouds</option></select>", {
             "class": "form-control",
             "name": "",
 
