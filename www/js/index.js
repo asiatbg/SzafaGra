@@ -334,17 +334,24 @@ function queryDatabseForClothes(token) {
             var image = document.createElement("img");
             image.src = currentObj.url;
             $(image).addClass("contentImage");
+            $(image).attr("id", i);
             $(div).append(image);
         }
 
     });
 }
 
-$(document).on( 'taphold', '.menu-wardrobe img', tapholdHandler );
+$(document).on( 'taphold', '.menu-wardrobe img', tapWardrobe );
+$(document).on( 'taphold', '.i img', tapImage );
 
+// deleting image html only
+function tapImage(event){
+    var imageID = $(this).attr("id");
+    $("#" + imageID).remove();
+}
 
 function deleteStorage(wardrobeID){
-    firebase.database().ref('Users/' + getCurrentUser().uid + '/' + wardrobeID + '/').on('value', function (snapshot) {
+    firebase.database().ref('Users/' + getCurrentUser().uid + '/' + wardrobeID + '/').once('value', function (snapshot) {
         var postObject = snapshot.val();
         if (postObject == null) {
             return;
@@ -386,13 +393,13 @@ function deleteDatabase(wardrobeID){
 }
 
 // deleting wardrobe from html, database and storage working only if you are executing one of them
-function tapholdHandler( event ){
+function tapWardrobe( event ){
 
     var wardrobeID = $(this).attr("id");
     $('#' + wardrobeID).get(0).nextSibling.remove(); // deleting span with wardrobe name
     $("#" + wardrobeID).remove();
     deleteStorage(wardrobeID);
-   // deleteDatabase(wardrobeID);  
+    deleteDatabase(wardrobeID);  
 }  
 
 //Mobile navigation
