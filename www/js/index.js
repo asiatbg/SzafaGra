@@ -49,8 +49,8 @@ btnSignUp.addEventListener('click', function () {
 
 //Login with email and password
 btnLogin.addEventListener('click', e => {
-    const email = txtEmailLogin.value;
-    const password = txtPasswordLogin.value;
+    const email = "asiak995@gmail.com";//txtEmailLogin.value;
+    const password = "gggggg"; // txtPasswordLogin.value;
     if (password == "" || email == "") {
         alert("Fill in all fields");
         return;
@@ -128,6 +128,18 @@ function logOut() {
             console.log(error.message);
         });
 }
+
+
+//Show and hide wardrobe in lottery
+const btnDraw = document.getElementById('btnDraw');
+btnDraw.addEventListener('click', function () {
+    if (hideWardrobeDraw.style.display === "block") {
+        hideWardrobeDraw.style.display = "none";
+    } else {
+        hideWardrobeDraw.style.display = "block";
+    }
+});
+
 
 
 //Take picture from gallery
@@ -271,8 +283,15 @@ function moveToWardrobeCats(getElement) {
     });
 }
 
-// loading wardrobes to #main
+const hideWardrobeDraw = document.getElementById('hideWardrobeDraw');
+var ul = document.createElement("ul");
+ul.setAttribute('id', 'hideShowWardrobe');
+hideWardrobeDraw.appendChild(ul);
+// loading wardrobes to #main and Draw
 function queryDatabseForWardrobes(token) {
+
+    // Add ul to Draw wardrobe
+
 
     return firebase.database().ref('Users/' + token + '/').once('value').then(function (snapshot) {
         var postObject = snapshot.val();
@@ -294,6 +313,22 @@ function queryDatabseForWardrobes(token) {
 
             moveToWardrobeCats(wardrobeAmountArray[i - 1]);
             $('.menu-wardrobe').append(wardrobeAmountArray[i - 1]);
+
+
+
+
+            // Add li to Draw wardrobe
+            var li = document.createElement("li");
+            var snippet = document.createTextNode(wardrobeAmountArray[i - 1]);
+
+            li.id = wardrobeAmountArray[i - 1];
+            ul.appendChild(li);
+
+            li = document.getElementById(wardrobeAmountArray[i - 1]);
+            var a = document.createElement('a');
+            a.href = "#lottery";
+            a.appendChild(snippet);
+            li.appendChild(a);
         }
 
     });
@@ -379,6 +414,18 @@ $(document).ready(function () {
 
             $('.menu-wardrobe').append(warName);
             moveToWardrobeCats(warName);
+
+            var li = document.createElement("li");
+            var snippet = document.createTextNode(warName);
+
+            li.id = warName;
+            ul.appendChild(li);
+
+            li = document.getElementById(warName);
+            var a = document.createElement('a');
+            a.href = "#lottery";
+            a.appendChild(snippet);
+            li.appendChild(a);
             warName = '';
         }
     });

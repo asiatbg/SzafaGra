@@ -416,9 +416,9 @@ label {
 	margin-left: 17px; 
 	cursor: pointer;
 }
-b:hover{
+.logout:hover{
 	margin-bottom: 5px;
-	padding-left: .5em;
+	padding-left: 3em;
 	-webkit-transition: all .5s;
 	-o-transition: all .5s;
 	transition: all .5s;
@@ -829,7 +829,13 @@ select {
 }
 
 /*lottery*/
-
+#hideWardrobeDraw {
+    display: none;
+}
+#hideWardrobeDraw li {
+    list-style: none;
+    
+}
 .btn-love {
     position: fixed;
     background: #2F80ED;
