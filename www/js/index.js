@@ -321,11 +321,9 @@ function queryDatabseForClothes(token) {
         for (var i = 0; i < keys.length; i++) {
             var currentObj = postObject[keys[i]];
             //displaying image on #clothes
-            if (i % 3 == 0) {
+            if (i % 2 == 0) {
                 var div = document.createElement("div");
                 $(div).addClass("i");
-                // $(".i").css("width", 50);
-                //$(".i").css("height", 50);
                 $("#putImage").append(div);
             }
 
@@ -455,25 +453,6 @@ $(document).ready(function () {
     var temp = [];
     var daysOfWeek;
     $("#getWeather").click(function () {
-        // var canvas = document.getElementById('chart');
-        // var ctx = document.getElementById('chart').getContext("2d");
-
-        // ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // var oldcanv = document.getElementById('chart');
-        // var divChart = document.getElementsByClassName('chartjs-size-monitor')[0];
-
-        // console.log(oldcanv);
-        // console.log(divChart);
-        // if (oldcanv !== null) {
-        //     document.getElementsByClassName('chartjs-size-monitor')[0].removeChild('chart');
-        //     document.getElementById('divChart').removeChild(divChart);
-
-        // }
-
-        // var canv = document.createElement('canvas');
-        // canv.id = 'chart';
-        // document.getElementById('divChart').appendChild(canv);
         var city = $("#city").val();
 
         var key = '33dbe3b930c23ad2c7a0630b49f3e440';

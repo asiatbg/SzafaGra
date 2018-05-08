@@ -411,7 +411,7 @@ label {
     
 }
 
-#logout {
+.logout {
 	color: white;
 	margin-left: 17px; 
 	cursor: pointer;
@@ -446,7 +446,7 @@ b:hover{
 
 .nav.active { left: 0; }
 
-#mobile-nav {
+.mobile-nav {
     background: #62B553;
     position: absolute;
     width: 30px;
@@ -721,13 +721,13 @@ select {
 
 /* loading pictures */
 
-.i{
-    height: 50%;
-    width: 50%;
-}
+
 .contentImage{
-    height: 100%; 
-    width: 100%; 
+    display: inline-block;
+    max-width: 98%;
+    height: 48%; 
+    width: 48%;
+    margin: 1%;
     object-fit: contain;
 }
 
