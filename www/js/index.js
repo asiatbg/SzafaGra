@@ -190,6 +190,7 @@ function setWardrobeName() {
     }   
     warName = name;
 }
+
 function uploadToDatabase(downloadURL) {   
     var minTemp = $('#range-from').val();
     var maxTemp = $('#range-to').val();
@@ -296,8 +297,6 @@ function isUserSignedIn(){
     }
 }
 
-
-
 // download and display clothes for particular wardrobe and category
 function loadClothes() {
     if(isUserSignedIn == false)
@@ -341,6 +340,10 @@ $(document).on('pageshow', 'body', function() {
         $(".menu-wardrobe").empty();
         loadWardrobes();
     }
+    else if(activePage == "lottery")
+    {
+        getCityToDraw();
+    }
 });
 
 //ask user to confirm delete
@@ -369,52 +372,6 @@ function tapImage(event){
     }
 }
 
-/*function deleteStorage(wardrobeID){
-    firebase.database().ref('Users/' + getCurrentUser().uid + '/' + wardrobeID + '/').once('value', function (snapshot) {
-        var postObject = snapshot.val();
-        if (postObject == null) {
-            return;
-        }
-        var catName = Object.getOwnPropertyNames(postObject).toString();
-        var categories = catName.split(",");
-       for (var i = 0; i < categories.length; i++) {
-
-                firebase.database().ref('Users/' + getCurrentUser().uid + '/' + wardrobeID + '/' + categories[i] + '/').on('value', function (snapshot) {
-                var clothes = snapshot.val();   
-                 if (clothes == null) {
-                    return;
-                }         
-                var keys = Object.keys(clothes);
-
-                for (var i = 0; i < keys.length; i++) {
-                    
-                    var currentObj = clothes[keys[i]];
-                    // Create a reference to the file to delete storage
-                    var desertRef = firebase.storage().ref().child(getCurrentUser().uid + '/' + wardrobeID + '/' + currentObj.fileName);
-                    // Delete the file
-                    desertRef.delete().then(function() {
-                      console.log("Remove succeeded -> storage.")
-
-
-                      console.log('Users/' + getCurrentUser().uid + '/' + wardrobeID + '/' + currentObj.category + '/' + currentObj.key + '/');
-                      var ref = firebase.database().ref('Users/' + getCurrentUser().uid + '/' + wardrobeID + '/' + currentObj.category + '/' + currentObj.key + '/');
-                        ref.remove()
-                        .then(function() {
-                            console.log("Remove succeeded. -> database")
-                        })
-                        .catch(function(error) {
-                            console.log("Remove failed: " + error.message)
-                        }); 
-                    }).catch(function(error) {
-                      // Uh-oh, an error occurred!
-                    })
-                   
-                }            
-            });
-        }
-    });
-}*/
-
 function deleteWardrobe(wardrobeID){
  var ref = firebase.database().ref('Users/' + getCurrentUser().uid + '/' + wardrobeID + '/');
     ref.remove()
@@ -435,6 +392,30 @@ function tapWardrobe( event ){
         deleteWardrobe(wardrobeID);
     }        
 }  
+
+function getCityToDraw(){
+     var cityName = prompt("Enter city name ", "Katmandu");
+    if (cityName == '') {
+        alert("Enter valid city name!");
+        return;
+    }   
+    getActualWeatherConditions(cityName);
+}
+
+function getActualWeatherConditions(cityName){
+    var city = cityName;
+    var key = '33dbe3b930c23ad2c7a0630b49f3e440';   
+
+    $.get('http://api.openweathermap.org/data/2.5/weather', {q:city, appid:key, units: 'metric'},  function(data) {
+            var zm = '';
+            $.each(data.weather, function(index, val){
+                zm +=  data.name + " " + data.main.temp + ' ' + val.main;
+            });
+            console.log(zm);
+        }, 'json'); 
+
+}
+
 
 //Mobile navigation
 $(document).ready(function () {
