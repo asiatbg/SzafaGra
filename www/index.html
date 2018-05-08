@@ -96,14 +96,11 @@
                         <a href="#main">Home</a>
                     </li>
                     <li>
-					<b class="draw">Draw</b>
-                    <span class="fa-li">
-                    <i class="fas fa-question" aria-hidden="true"></i>
-                    </span>
-					<ul class="list1">
-					<li><a href="#lottery"><span class="spanstyle"></span></li>
-					</ul>
-					</li>
+                        <span class="fa-li">
+                            <i class="fas fa-question" aria-hidden="true"></i>
+                        </span>
+                        <a href="#lottery">Draw</a>
+                    </li>
                     <li>
                         <span class="fa-li">
                             <i class="fas fa-sun" aria-hidden="true"></i>
@@ -139,10 +136,6 @@
         <button type="button" class="btn btn-war">
             <i class="fas fa-plus"></i>
         </button>
-
-
-
-
     </div>
 
 
@@ -161,14 +154,11 @@
                         <a href="#main">Home</a>
                     </li>
                     <li>
-					<b class="draw">Draw</b>
-                    <span class="fa-li">
-                    <i class="fas fa-question" aria-hidden="true"></i>
-                    </span>
-					<ul class="list1">
-					<li><a href="#lottery"><span class="spanstyle"></span></li>
-					</ul>
-					</li>
+                        <span class="fa-li">
+                            <i class="fas fa-question" aria-hidden="true"></i>
+                        </span>
+                        <a href="#lottery">Draw</a>
+                    </li>
                     <li>
                         <span class="fa-li">
                             <i class="fas fa-sun" aria-hidden="true"></i>
@@ -191,7 +181,7 @@
             </div>
 
         </div>
-        <p id="war-nr"></p>
+        <p id="war-nr"></p>    
         <!-- jakby ktoś tu coś kombinował z nazwami kategorii to niech zmieni też id każdej z nich -->
         <div class="wear" id="wear">
             <span class="cat1" id="Tops & Sweaters">
@@ -254,14 +244,11 @@
                         <a href="#main">Home</a>
                     </li>
                     <li>
-					<b class="draw">Draw</b>
-                    <span class="fa-li">
-                    <i class="fas fa-question" aria-hidden="true"></i>
-                    </span>
-					<ul class="list1">
-					<li><a href="#lottery"><span class="spanstyle"></span></li>
-					</ul>
-					</li>
+                        <span class="fa-li">
+                            <i class="fas fa-question" aria-hidden="true"></i>
+                        </span>
+                        <a href="#lottery">Draw</a>
+                    </li>
                     <li>
                         <span class="fa-li">
                             <i class="fas fa-sun" aria-hidden="true"></i>
@@ -305,7 +292,7 @@
                 <i class="fas fa-plus"></i>
             </button>
         </div>
-
+        
 
     </div>
 
@@ -324,14 +311,11 @@
                         <a href="#main">Home</a>
                     </li>
                     <li>
-					<b class="draw">Draw</b>
-                    <span class="fa-li">
-                    <i class="fas fa-question" aria-hidden="true"></i>
-                    </span>
-					<ul class="list1">
-					<li><a href="#lottery"><span class="spanstyle"></span></li>
-					</ul>
-					</li>
+                        <span class="fa-li">
+                            <i class="fas fa-question" aria-hidden="true"></i>
+                        </span>
+                        <a href="#lottery">Draw</a>
+                    </li>
                     <li>
                         <span class="fa-li">
                             <i class="fas fa-sun" aria-hidden="true"></i>
@@ -358,8 +342,6 @@
         <div id="containerImg">
         </div>
 
-        <!--te te te pod zdjeciem, jak potrzeba więcej takich, to kopiuj-wklej-->
-
         <div class="conty">
             <div class="panel panel-primary">
                 <div class="panel-body">
@@ -367,10 +349,11 @@
                         <div class="col-sm-12">
                             <div class="row" id="target">
                                 <div class="col-sm-2">
-                                    <div class="categories">
-                                        <span>Category:</span>
+                                    <div class="oneline">
+                                    <span>Category:</span>
+                                    <div class="categories styled-select">
                                         <select class="form-control" id="selectCategory">
-                                            <option>Select</option>
+                                            <option value="choose-one" data-placeholder="true">Select</option>
                                             <option>Tops & Sweaters</option>
                                             <option>Dresses</option>
                                             <option>Skirts & Shorts</option>
@@ -380,33 +363,29 @@
                                             <option>Headgear</option>
                                         </select>
                                     </div>
-
+                                    </div>
                                     <form>
                                         <div class="ranges">
-                                            <div>
+                                            <div class="oneline">
                                                 <span>Temperature range:</span>
                                                 <input id="range-from" min="-80" max="100" value="-15°C">
                                                 <input id="range-to" min="-80" max="100" value="100°C">
                                             </div>
                                         </div>
                                     </form>
-
-                                    <div class="input-group">
+                                    <div class="onelineb">
                                         <span>Weather:</span>
-                                        <select class="form-control" id="selectWeather">
-                                            <option>Select</option>
-                                            <option>Rain</option>
-                                            <option>Thunderstorm</option>
-                                            <option>Drizle</option>
-                                            <option>Snow</option>
-                                            <option>Clear</option>
-                                            <option>Clouds</option>
-                                        </select>
-                                        <span class="input-group-btn">
-                                            <button class="btn btn-sm btn-link removeBtn">
-                                                <span class="fas fa-times"></span>
-                                            </button>
-                                        </span>
+                                        <div class="input-group styled-selectb">
+                                            <select class="form-control">
+                                                <option value="choose-one" data-placeholder="true">Select</option>
+                                                <option>Rain</option>
+                                                <option>Thunderstorm</option>
+                                                <option>Drizzle</option>
+                                                <option>Snow</option>
+                                                <option>Clear</option>
+                                                <option>Clouds</option>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -448,14 +427,11 @@
                         <a href="#main">Home</a>
                     </li>
                     <li>
-					<b class="draw">Draw</b>
-                    <span class="fa-li">
-                    <i class="fas fa-question" aria-hidden="true"></i>
-                    </span>
-					<ul class="list1">
-					<li><a href="#lottery"><span class="spanstyle"></span></li>
-					</ul>
-					</li>
+                        <span class="fa-li">
+                            <i class="fas fa-question" aria-hidden="true"></i>
+                        </span>
+                        <a href="#lottery">Draw</a>
+                    </li>
                     <li>
                         <span class="fa-li">
                             <i class="fas fa-sun" aria-hidden="true"></i>
@@ -504,14 +480,11 @@
                         <a href="#main">Home</a>
                     </li>
                     <li>
-					<b class="draw">Draw</b>
-                    <span class="fa-li">
-                    <i class="fas fa-question" aria-hidden="true"></i>
-                    </span>
-					<ul class="list1">
-					<li><a href="#lottery"><span class="spanstyle"></span></li>
-					</ul>
-					</li>
+                        <span class="fa-li">
+                            <i class="fas fa-question" aria-hidden="true"></i>
+                        </span>
+                        <a href="#lottery">Draw</a>
+                    </li>
                     <li>
                         <span class="fa-li">
                             <i class="fas fa-sun" aria-hidden="true"></i>
@@ -554,14 +527,11 @@
                         <a href="#main">Home</a>
                     </li>
                     <li>
-					<b class="draw">Draw</b>
-                    <span class="fa-li">
-                    <i class="fas fa-question" aria-hidden="true"></i>
-                    </span>
-					<ul class="list1">
-					<li><a href="#lottery"><span class="spanstyle"></span></li>
-					</ul>
-					</li>
+                        <span class="fa-li">
+                            <i class="fas fa-question" aria-hidden="true"></i>
+                        </span>
+                        <a href="#lottery">Draw</a>
+                    </li>
                     <li>
                         <span class="fa-li">
                             <i class="fas fa-sun" aria-hidden="true"></i>
@@ -602,14 +572,11 @@
                         <a href="#main">Home</a>
                     </li>
                     <li>
-					<b class="draw">Draw</b>
-                    <span class="fa-li">
-                    <i class="fas fa-question" aria-hidden="true"></i>
-                    </span>
-					<ul class="list1">
-					<li><a href="#lottery"><span class="spanstyle"></span></li>
-					</ul>
-					</li>
+                        <span class="fa-li">
+                            <i class="fas fa-question" aria-hidden="true"></i>
+                        </span>
+                        <a href="#lottery">Draw</a>
+                    </li>
                     <li>
                         <span class="fa-li">
                             <i class="fas fa-sun" aria-hidden="true"></i>
