@@ -1,3 +1,4 @@
+
 function init() {
     document.addEventListener('deviceready', onDeviceReady, false);
 }
@@ -198,15 +199,16 @@ function setWardrobeName() {
         alert("Enter valid name!");
         return;
     }
-    //console.log(warName);
+   
     warName = name;
 }
-function uploadToDatabase(downloadURL) {
+function uploadToDatabase(downloadURL, fileName) {
     var minTemp = $('#range-from').val();
     var maxTemp = $('#range-to').val();
     var postKey = firebase.database().ref('Users/' + getCurrentUser().uid + '/' + wardrobe + '/' + selectedCategory + '/').push().key;
     var updates = {};
     var postData = {
+        fileName: fileName,
         url: downloadURL,
         //category: selectedCategory, // nwm czy to nie będzie potrzebne w tym miejscu do losowania??
         minTemp: minTemp,
@@ -231,8 +233,8 @@ function getCurrentUser() {
 
 function uploadToStorage(imgUri) {
     var imgStorage = imgUri;
-
-    var storageRef = firebase.storage().ref(getCurrentUser().uid + '/' + 'Clothes/' + uniqueNameFile());
+    var fileName = uniqueNameFile();
+    var storageRef = firebase.storage().ref(getCurrentUser().uid + '/' + wardrobe + '/' + fileName);
     var uploadTask = storageRef.putString(imgStorage, 'data_url');
     uploadTask.on('state_changed', function (snapshot) {
 
@@ -240,7 +242,7 @@ function uploadToStorage(imgUri) {
         console.log(error)
     }, function () {
         var downloadURL = uploadTask.snapshot.downloadURL;
-        uploadToDatabase(downloadURL);
+        uploadToDatabase(downloadURL, fileName);
     });
 }
 
@@ -292,7 +294,8 @@ function queryDatabseForWardrobes(token) {
             }).appendTo('.menu-wardrobe');
 
             moveToWardrobeCats(wardrobeAmountArray[i - 1]);
-            $('.menu-wardrobe').append(wardrobeAmountArray[i - 1]);
+            var text = $("<span></span>").text(wardrobeAmountArray[i - 1]);
+            $('.menu-wardrobe').append(text);
         }
 
     });
@@ -308,6 +311,8 @@ function loadClothes() {
         // No user is signed in.
     }
 }
+
+
 // download and display clothes for particular wardrobe and category
 function queryDatabseForClothes(token) {
     $("#putImage").empty();
@@ -334,6 +339,61 @@ function queryDatabseForClothes(token) {
 
     });
 }
+
+$(document).on( 'taphold', '.menu-wardrobe img', tapholdHandler );
+
+
+function deleteStorage(wardrobeID){
+    firebase.database().ref('Users/' + getCurrentUser().uid + '/' + wardrobeID + '/').on('value', function (snapshot) {
+        var postObject = snapshot.val();
+        if (postObject == null) {
+            return;
+        }
+        var catName = Object.getOwnPropertyNames(postObject).toString();
+        var categories = catName.split(",");
+       
+        for (var i = 0; i < categories.length; i++) {
+                firebase.database().ref('Users/' + getCurrentUser().uid + '/' + wardrobeID + '/' + categories[i] + '/').on('value', function (snapshot) {
+                var clothes = snapshot.val();            
+                var keys = Object.keys(clothes);
+                for (var i = 0; i < keys.length; i++) {
+                    console.log(keys[i]);
+                    var currentObj = clothes[keys[i]];
+                    // Create a reference to the file to delete storage
+                    var desertRef = firebase.storage().ref().child(getCurrentUser().uid + '/' + wardrobeID + '/' + currentObj.fileName);
+                    // Delete the file
+                    desertRef.delete().then(function() {
+                      console.log("Remove succeeded -> storage.")
+                    }).catch(function(error) {
+                      // Uh-oh, an error occurred!
+                    })
+                   
+                }            
+            });
+        }
+    });
+}
+
+function deleteDatabase(wardrobeID){
+ var ref = firebase.database().ref('Users/' + getCurrentUser().uid + '/' + wardrobeID + '/');
+    ref.remove()
+    .then(function() {
+        console.log("Remove succeeded. -> database")
+    })
+    .catch(function(error) {
+        console.log("Remove failed: " + error.message)
+    }); 
+}
+
+// deleting wardrobe from html, database and storage working only if you are executing one of them
+function tapholdHandler( event ){
+
+    var wardrobeID = $(this).attr("id");
+    $('#' + wardrobeID).get(0).nextSibling.remove(); // deleting span with wardrobe name
+    $("#" + wardrobeID).remove();
+    deleteStorage(wardrobeID);
+   // deleteDatabase(wardrobeID);  
+}  
 
 //Mobile navigation
 $(document).ready(function () {
