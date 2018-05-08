@@ -1,4 +1,3 @@
-
 function init() {
     document.addEventListener('deviceready', onDeviceReady, false);
 }
@@ -24,6 +23,7 @@ var category;
 var warName;
 var selectedCategory;
 var selectedWeather;
+
 // Sign up with email and password
 btnSignUp.addEventListener('click', function () {
     const email = txtEmailRegistration.value;
@@ -64,7 +64,6 @@ btnLogin.addEventListener('click', e => {
         });
 
 });
-
 
 //Login with Google
 btnGoogleLogin.addEventListener('click', e => {
@@ -117,7 +116,6 @@ btnSendPass.addEventListener('click', e => {
     });
 });
 
-
 //Sign out
 function logOut() {
     firebase.auth().signOut()
@@ -129,19 +127,14 @@ function logOut() {
         });
 }
 
-
 //Take picture from gallery
 function openFilePicker(selection) {
-
-
     const srcType = Camera.PictureSourceType.SAVEDPHOTOALBUM;
     const options = setOptions(srcType);
 
     navigator.camera.getPicture(function cameraSuccess(imageUri) {
         window.location.href = "#liamneeson";
-        displayImage(imageUri);
-        //uploadToStorage(imageUri);
-
+        displayImage(imageUri);    
     }, function cameraError(error) {
         console.debug("Unable to obtain picture: " + error, "app");
 
@@ -149,18 +142,14 @@ function openFilePicker(selection) {
 }
 
 function openCamera(selection) {
-
     const srcType = Camera.PictureSourceType.CAMERA;
     const options = setOptions(srcType);
 
     navigator.camera.getPicture(function cameraSuccess(imageUri) {
         window.location.href = "#liamneeson";
-        displayImage(imageUri);
-        //uploadToStorage(imageUri);
-
+        displayImage(imageUri);        
     }, function cameraError(error) {
         console.debug("Unable to obtain picture: " + error, "app");
-
     }, options);
 }
 
@@ -198,13 +187,18 @@ function setWardrobeName() {
     if (name == '' || name.length > 10) {
         alert("Enter valid name!");
         return;
-    }
-   
+    }   
     warName = name;
 }
-function uploadToDatabase(downloadURL, fileName) {
+function uploadToDatabase(downloadURL) {   
     var minTemp = $('#range-from').val();
     var maxTemp = $('#range-to').val();
+
+    if (minTemp == '' || maxTemp == '' || selectedCategory == '' || selectedWeather)
+    {
+         alert("Upload failed, you must fill in all fields!");
+         return;
+    }
     var postKey = firebase.database().ref('Users/' + getCurrentUser().uid + '/' + wardrobe + '/' + selectedCategory + '/').push().key;
     var updates = {};
     var postData = {
