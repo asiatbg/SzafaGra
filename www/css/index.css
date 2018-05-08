@@ -552,7 +552,7 @@ li:hover > ul {
     width: 70px;
     height: 110px;
     border: none;
-    bottom: 160px; /*or 60???*/
+    bottom: 60px; /*or 160???*/
     left: calc(50% - 25px/2 + 119.5px);
     display:none;
     padding: 3px;
@@ -582,7 +582,7 @@ p {
     width: 241px;
     height: 32px;
     left: 10px;
-    top: 65px;
+    margin-top: 10px;
 
     font-style: normal;
     font-weight: normal;
@@ -593,53 +593,19 @@ p {
     text-shadow: 0px 0px 10px rgba(0, 0, 0, 0.25);
 }
 
-.cat1 {
-    position: absolute;
-    width: 109px;
-    height: 38px;
-    left: 54px;
-    top: 136px;
+.rags {
+    display: inline-block;
+    height: 30%; 
+    width: 30%;
+    margin-left: 20px;
+    margin-right: 20px;
+    padding-bottom: 20px;
+    object-fit: contain;
 }
 
-.cat2 {
-    position: absolute;
+.rags > a > img {
+    height: 100px;
     width: 109px;
-    height: 37px;
-    left: 221px;
-    top: 136px;
-}
-
-.cat3 {
-    position: absolute;
-    width: 109px;
-    height: 40px;
-    left: 55px;
-    top: 320px;
-}
-
-.cat4 {
-    position: absolute;
-    width: 109px;
-    height: 24px;
-    left: 216px;
-    top: 311px;
-
-}
-
-.cat5 {
-    position: absolute;
-    width: 109px;
-    height: 24px;
-    left: 59px;
-    top: 524px;
-}
-
-.cat6 {
-    position: absolute;
-    width: 109px;
-    height: 53px;
-    left: 206px;
-    top: 514px;	
 }
 
 .wear {
@@ -647,6 +613,7 @@ p {
     font-size: 14px;
     text-align: center;
     color: #786D6D;
+    margin-top: 50px;
 }
 
 /*liamneeson*/
