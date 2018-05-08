@@ -58,7 +58,7 @@ btnLogin.addEventListener('click', e => {
     firebase.auth().signInWithEmailAndPassword(email, password)
         .then(function (result) {
             window.location.href = "#main";
-            loadWardrobes();
+            
         }).catch(function (error) {
             alert(error);
         });
@@ -74,7 +74,7 @@ btnGoogleLogin.addEventListener('click', e => {
             return firebase.auth().getRedirectResult();
         }).then(function (result) {
             window.location.href = "#main";
-            loadWardrobes();
+            
         }).catch(function (error) {
             alert(error.message);
 
@@ -91,7 +91,7 @@ btnFacebookLogin.addEventListener('click', e => {
             }).then(function (result) {
                 if (result.credential) {
                     window.location.href = "#main";
-                    loadWardrobes();
+                    
                 }
                 var user = result.user;
             }).catch(function (error) {
@@ -208,9 +208,9 @@ function uploadToDatabase(downloadURL, fileName) {
     var postKey = firebase.database().ref('Users/' + getCurrentUser().uid + '/' + wardrobe + '/' + selectedCategory + '/').push().key;
     var updates = {};
     var postData = {
-        fileName: fileName,
+        key: postKey,      
         url: downloadURL,
-        //category: selectedCategory, // nwm czy to nie będzie potrzebne w tym miejscu do losowania??
+        category: selectedCategory, 
         minTemp: minTemp,
         maxTemp: maxTemp,
         weather: selectedWeather
@@ -252,16 +252,6 @@ btnAcceptImage.addEventListener('click', function () {
     window.location.href = '#wardrobe-cats';
 });
 
-function loadWardrobes() {
-
-    var token = getCurrentUser().uid;
-    if (getCurrentUser()) {
-        // User is signed in.
-        queryDatabseForWardrobes(token);
-    } else {
-        // No user is signed in.
-    }
-};
 // display wardrobe name in wardrobe-cats, get wardrobe name for database
 function moveToWardrobeCats(getElement) {
     const wardrobeButton = document.getElementById(getElement);
@@ -273,9 +263,11 @@ function moveToWardrobeCats(getElement) {
 }
 
 // loading wardrobes to #main
-function queryDatabseForWardrobes(token) {
+function loadWardrobes(){
+    if(isUserSignedIn == false)
+        return;
 
-    return firebase.database().ref('Users/' + token + '/').once('value').then(function (snapshot) {
+    return firebase.database().ref('Users/' + getCurrentUser().uid + '/').once('value').then(function (snapshot) {
         var postObject = snapshot.val();
         if (postObject == null) {
             return;
@@ -301,26 +293,28 @@ function queryDatabseForWardrobes(token) {
     });
 }
 
-
-function loadClothes() {
+function isUserSignedIn(){
     var token = getCurrentUser().uid;
     if (getCurrentUser()) {
-        // User is signed in.
-        queryDatabseForClothes(token);
+        return true;      
     } else {
-        // No user is signed in.
+        return false
     }
 }
 
 
+
 // download and display clothes for particular wardrobe and category
-function queryDatabseForClothes(token) {
+function loadClothes() {
+    if(isUserSignedIn == false)
+        return;
+
     $("#putImage").empty();
-    return firebase.database().ref('Users/' + getCurrentUser().uid + '/' + wardrobe + '/' + category + '/').on('value', function (snapshot) {
+    return firebase.database().ref('Users/' + getCurrentUser().uid + '/' + wardrobe + '/' + category + '/').once('value', function (snapshot) {
         var postObject = snapshot.val();
-        if (postObject === null) {
+        if (postObject === null) 
             return;
-        }
+        
         var keys = Object.keys(postObject);
         for (var i = 0; i < keys.length; i++) {
             var currentObj = postObject[keys[i]];
@@ -334,7 +328,7 @@ function queryDatabseForClothes(token) {
             var image = document.createElement("img");
             image.src = currentObj.url;
             $(image).addClass("contentImage");
-            $(image).attr("id", i);
+            $(image).attr("id", currentObj.key);
             $(div).append(image);
         }
 
@@ -343,14 +337,45 @@ function queryDatabseForClothes(token) {
 
 $(document).on( 'taphold', '.menu-wardrobe img', tapWardrobe );
 $(document).on( 'taphold', '.i img', tapImage );
+ //$.event.special.tap.tapholdThreshold = 2000; //tap This value dictates how long the user must hold their tap before the taphold event is fired on the target element
 
-// deleting image html only
-function tapImage(event){
-    var imageID = $(this).attr("id");
-    $("#" + imageID).remove();
+//loading wardrobes just in case if user delete all the pictures from categories
+$(document).on('pageshow', 'body', function() {   
+    var activePage = $.mobile.activePage.attr('id');
+    if(activePage == "main")
+    {
+        $(".menu-wardrobe").empty();
+        loadWardrobes();
+    }
+});
+
+//ask user to confirm delete
+function deleteDecision(){
+     var decision = confirm("Are you sure, you want to delete it?");
+    if (decision == true) 
+        return true;
+     
+    return false;
+    
 }
 
-function deleteStorage(wardrobeID){
+// deleting image on taphold
+function tapImage(event){
+    console.log("tap tap");
+    if (deleteDecision())
+    {       
+        var imageID = $(this).attr("id");
+        $("#" + imageID).remove();
+        var ref = firebase.database().ref('Users/' + getCurrentUser().uid + '/' + wardrobe + '/' + category + '/' + imageID + '/');
+        ref.remove()
+        .then(function() {           
+        })
+        .catch(function(error) {           
+        }); 
+    }
+}
+
+/*function deleteStorage(wardrobeID){
     firebase.database().ref('Users/' + getCurrentUser().uid + '/' + wardrobeID + '/').once('value', function (snapshot) {
         var postObject = snapshot.val();
         if (postObject == null) {
@@ -358,19 +383,34 @@ function deleteStorage(wardrobeID){
         }
         var catName = Object.getOwnPropertyNames(postObject).toString();
         var categories = catName.split(",");
-       
-        for (var i = 0; i < categories.length; i++) {
+       for (var i = 0; i < categories.length; i++) {
+
                 firebase.database().ref('Users/' + getCurrentUser().uid + '/' + wardrobeID + '/' + categories[i] + '/').on('value', function (snapshot) {
-                var clothes = snapshot.val();            
+                var clothes = snapshot.val();   
+                 if (clothes == null) {
+                    return;
+                }         
                 var keys = Object.keys(clothes);
+
                 for (var i = 0; i < keys.length; i++) {
-                    console.log(keys[i]);
+                    
                     var currentObj = clothes[keys[i]];
                     // Create a reference to the file to delete storage
                     var desertRef = firebase.storage().ref().child(getCurrentUser().uid + '/' + wardrobeID + '/' + currentObj.fileName);
                     // Delete the file
                     desertRef.delete().then(function() {
                       console.log("Remove succeeded -> storage.")
+
+
+                      console.log('Users/' + getCurrentUser().uid + '/' + wardrobeID + '/' + currentObj.category + '/' + currentObj.key + '/');
+                      var ref = firebase.database().ref('Users/' + getCurrentUser().uid + '/' + wardrobeID + '/' + currentObj.category + '/' + currentObj.key + '/');
+                        ref.remove()
+                        .then(function() {
+                            console.log("Remove succeeded. -> database")
+                        })
+                        .catch(function(error) {
+                            console.log("Remove failed: " + error.message)
+                        }); 
                     }).catch(function(error) {
                       // Uh-oh, an error occurred!
                     })
@@ -379,27 +419,27 @@ function deleteStorage(wardrobeID){
             });
         }
     });
-}
+}*/
 
-function deleteDatabase(wardrobeID){
+function deleteWardrobe(wardrobeID){
  var ref = firebase.database().ref('Users/' + getCurrentUser().uid + '/' + wardrobeID + '/');
     ref.remove()
     .then(function() {
-        console.log("Remove succeeded. -> database")
+      
     })
     .catch(function(error) {
         console.log("Remove failed: " + error.message)
     }); 
 }
 
-// deleting wardrobe from html, database and storage working only if you are executing one of them
 function tapWardrobe( event ){
-
-    var wardrobeID = $(this).attr("id");
-    $('#' + wardrobeID).get(0).nextSibling.remove(); // deleting span with wardrobe name
-    $("#" + wardrobeID).remove();
-    deleteStorage(wardrobeID);
-    deleteDatabase(wardrobeID);  
+    if (deleteDecision())
+    {
+        var wardrobeID = $(this).attr("id");
+        $('#' + wardrobeID).get(0).nextSibling.remove(); // deleting span with wardrobe name
+        $("#" + wardrobeID).remove();
+        deleteWardrobe(wardrobeID);
+    }        
 }  
 
 //Mobile navigation
@@ -525,7 +565,7 @@ $(document).ready(function () {
         var url = "https://api.openweathermap.org/data/2.5/forecast";
 
         $.get(url, { q: city, appid: key, units: 'metric' }, function (data) {
-            console.log("Data downloaded");
+          
             dateUTC = [];
             temp = [];
             for (let i = 0; i < data.list.length; i += 8) {
