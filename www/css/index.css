@@ -425,38 +425,6 @@ label {
 	transition: all .5s;
 }
 
-/* DRAW
-li ul {
-  display: none;
-}
-
-li:hover > ul {
-  display: block;
-}
-.list1 {
-	list-style-type: none;
-}
-.draw {
-	color: white;
-	margin-left: 25px; 
-	cursor: pointer;
-	padding-left: 1.5em;	
-}
-.draw:hover {
-	margin-bottom: 5px;
-	padding-left: 3em;
- 	-webkit-transition: all .5s;
- 	-o-transition: all .5s;
- 	transition: all .5s;
- }
-.spanstyle {
-	color: white;
-	text-decoration: none;
-	display: block;
-	padding-left: .5em;
-  
-}
- */
 
 /*FIN MENU*/
 /*Posicion Responsive Menu*/
@@ -809,9 +777,9 @@ span.fa-plus {
 }
 
 
-.input-container {
+/* .input-container {
 
-}
+} */
 
 .input-container input {
    
@@ -858,6 +826,17 @@ span.fa-plus {
 
 /*lottery*/
 
+#hideWardrobeDraw {
+    display: none;
+}
+#hideWardrobeDraw ul {
+    padding: 0px;
+    
+}
+#hideWardrobeDraw li {
+    list-style: none;
+    margin-top: -11px;
+}
 .btn-love {
     position: fixed;
     background: #2F80ED;

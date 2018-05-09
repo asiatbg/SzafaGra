@@ -18,6 +18,8 @@ const btnLogOut = document.getElementById('btnLogOut');
 const txtEmailReset = document.getElementById('txtEmailReset');
 const btnSendPass = document.getElementById('btnSendPass');
 const btnAcceptImage = document.getElementById('btnAcceptImage');
+const btnDraw = document.getElementById('btnDraw');
+const hideWardrobeDraw = document.getElementById('hideWardrobeDraw');
 var wardrobe;
 var category;
 var warName;
@@ -58,7 +60,7 @@ btnLogin.addEventListener('click', e => {
     firebase.auth().signInWithEmailAndPassword(email, password)
         .then(function (result) {
             window.location.href = "#main";
-            
+
         }).catch(function (error) {
             alert(error);
         });
@@ -73,7 +75,7 @@ btnGoogleLogin.addEventListener('click', e => {
             return firebase.auth().getRedirectResult();
         }).then(function (result) {
             window.location.href = "#main";
-            
+
         }).catch(function (error) {
             alert(error.message);
 
@@ -90,7 +92,7 @@ btnFacebookLogin.addEventListener('click', e => {
             }).then(function (result) {
                 if (result.credential) {
                     window.location.href = "#main";
-                    
+
                 }
                 var user = result.user;
             }).catch(function (error) {
@@ -127,6 +129,15 @@ function logOut() {
         });
 }
 
+//Show and hide wardrobe in lottery
+btnDraw.addEventListener('click', function () {
+    if (hideWardrobeDraw.style.display === "block") {
+        hideWardrobeDraw.style.display = "none";
+    } else {
+        hideWardrobeDraw.style.display = "block";
+    }
+});
+
 //Take picture from gallery
 function openFilePicker(selection) {
     const srcType = Camera.PictureSourceType.SAVEDPHOTOALBUM;
@@ -134,7 +145,7 @@ function openFilePicker(selection) {
 
     navigator.camera.getPicture(function cameraSuccess(imageUri) {
         window.location.href = "#liamneeson";
-        displayImage(imageUri);    
+        displayImage(imageUri);
     }, function cameraError(error) {
         console.debug("Unable to obtain picture: " + error, "app");
 
@@ -147,7 +158,7 @@ function openCamera(selection) {
 
     navigator.camera.getPicture(function cameraSuccess(imageUri) {
         window.location.href = "#liamneeson";
-        displayImage(imageUri);        
+        displayImage(imageUri);
     }, function cameraError(error) {
         console.debug("Unable to obtain picture: " + error, "app");
     }, options);
@@ -187,25 +198,24 @@ function setWardrobeName() {
     if (name == '' || name.length > 10) {
         alert("Enter valid name!");
         return;
-    }   
+    }
     warName = name;
 }
 
-function uploadToDatabase(downloadURL) {   
+function uploadToDatabase(downloadURL) {
     var minTemp = $('#range-from').val();
     var maxTemp = $('#range-to').val();
 
-    if (minTemp == '' || maxTemp == '' || selectedCategory == '' || selectedWeather)
-    {
-         alert("Upload failed, you must fill in all fields!");
-         return;
+    if (minTemp == '' || maxTemp == '' || selectedCategory == '' || selectedWeather) {
+        alert("Upload failed, you must fill in all fields!");
+        return;
     }
     var postKey = firebase.database().ref('Users/' + getCurrentUser().uid + '/' + wardrobe + '/' + selectedCategory + '/').push().key;
     var updates = {};
     var postData = {
-        key: postKey,      
+        key: postKey,
         url: downloadURL,
-        category: selectedCategory, 
+        category: selectedCategory,
         minTemp: minTemp,
         maxTemp: maxTemp,
         weather: selectedWeather
@@ -257,9 +267,15 @@ function moveToWardrobeCats(getElement) {
     });
 }
 
-// loading wardrobes to #main
-function loadWardrobes(){
-    if(isUserSignedIn == false)
+
+
+
+// loading wardrobes to #main and Draw
+function loadWardrobes() {
+    let ul = document.createElement("ul");
+    ul.setAttribute('id', 'hideShowWardrobe');
+    hideWardrobeDraw.appendChild(ul);
+    if (isUserSignedIn == false)
         return;
 
     return firebase.database().ref('Users/' + getCurrentUser().uid + '/').once('value').then(function (snapshot) {
@@ -283,15 +299,28 @@ function loadWardrobes(){
             moveToWardrobeCats(wardrobeAmountArray[i - 1]);
             var text = $("<span></span>").text(wardrobeAmountArray[i - 1]);
             $('.menu-wardrobe').append(text);
+
+            // Add li to Draw wardrobe
+            var li = document.createElement("li");
+            var snippet = document.createTextNode(wardrobeAmountArray[i - 1]);
+
+            li.id = wardrobeAmountArray[i - 1];
+            ul.appendChild(li);
+
+            li = document.getElementById(wardrobeAmountArray[i - 1]);
+            var a = document.createElement('a');
+            a.href = "#lottery";
+            a.appendChild(snippet);
+            li.appendChild(a);
         }
 
     });
 }
 
-function isUserSignedIn(){
+function isUserSignedIn() {
     var token = getCurrentUser().uid;
     if (getCurrentUser()) {
-        return true;      
+        return true;
     } else {
         return false
     }
@@ -299,15 +328,15 @@ function isUserSignedIn(){
 
 // download and display clothes for particular wardrobe and category
 function loadClothes() {
-    if(isUserSignedIn == false)
+    if (isUserSignedIn == false)
         return;
 
     $("#putImage").empty();
     return firebase.database().ref('Users/' + getCurrentUser().uid + '/' + wardrobe + '/' + category + '/').once('value', function (snapshot) {
         var postObject = snapshot.val();
-        if (postObject === null) 
+        if (postObject === null)
             return;
-        
+
         var keys = Object.keys(postObject);
         for (var i = 0; i < keys.length; i++) {
             var currentObj = postObject[keys[i]];
@@ -328,91 +357,87 @@ function loadClothes() {
     });
 }
 
-$(document).on( 'taphold', '.menu-wardrobe img', tapWardrobe );
-$(document).on( 'taphold', '.i img', tapImage );
- //$.event.special.tap.tapholdThreshold = 2000; //tap This value dictates how long the user must hold their tap before the taphold event is fired on the target element
+$(document).on('taphold', '.menu-wardrobe img', tapWardrobe);
+$(document).on('taphold', '.i img', tapImage);
+//$.event.special.tap.tapholdThreshold = 2000; //tap This value dictates how long the user must hold their tap before the taphold event is fired on the target element
 
 //loading wardrobes just in case if user delete all the pictures from categories
-$(document).on('pageshow', 'body', function() {   
+$(document).on('pageshow', 'body', function () {
     var activePage = $.mobile.activePage.attr('id');
-    if(activePage == "main")
-    {
+    if (activePage == "main") {
         $(".menu-wardrobe").empty();
         loadWardrobes();
     }
-    else if(activePage == "lottery")
-    {
-        getCityToDraw();
+    else if (activePage == "lottery") {
+        //getCityToDraw();
     }
 });
 
 //ask user to confirm delete
-function deleteDecision(){
-     var decision = confirm("Are you sure, you want to delete it?");
-    if (decision == true) 
+function deleteDecision() {
+    var decision = confirm("Are you sure, you want to delete it?");
+    if (decision == true)
         return true;
-     
+
     return false;
-    
+
 }
 
 // deleting image on taphold
-function tapImage(event){
+function tapImage(event) {
     console.log("tap tap");
-    if (deleteDecision())
-    {       
+    if (deleteDecision()) {
         var imageID = $(this).attr("id");
         $("#" + imageID).remove();
         var ref = firebase.database().ref('Users/' + getCurrentUser().uid + '/' + wardrobe + '/' + category + '/' + imageID + '/');
         ref.remove()
-        .then(function() {           
-        })
-        .catch(function(error) {           
-        }); 
+            .then(function () {
+            })
+            .catch(function (error) {
+            });
     }
 }
 
-function deleteWardrobe(wardrobeID){
- var ref = firebase.database().ref('Users/' + getCurrentUser().uid + '/' + wardrobeID + '/');
+function deleteWardrobe(wardrobeID) {
+    var ref = firebase.database().ref('Users/' + getCurrentUser().uid + '/' + wardrobeID + '/');
     ref.remove()
-    .then(function() {
-      
-    })
-    .catch(function(error) {
-        console.log("Remove failed: " + error.message)
-    }); 
+        .then(function () {
+
+        })
+        .catch(function (error) {
+            console.log("Remove failed: " + error.message)
+        });
 }
 
-function tapWardrobe( event ){
-    if (deleteDecision())
-    {
+function tapWardrobe(event) {
+    if (deleteDecision()) {
         var wardrobeID = $(this).attr("id");
         $('#' + wardrobeID).get(0).nextSibling.remove(); // deleting span with wardrobe name
         $("#" + wardrobeID).remove();
         deleteWardrobe(wardrobeID);
-    }        
-}  
+    }
+}
 
-function getCityToDraw(){
-     var cityName = prompt("Enter city name ", "Katmandu");
+function getCityToDraw() {
+    var cityName = prompt("Enter city name ", "Katmandu");
     if (cityName == '') {
         alert("Enter valid city name!");
         return;
-    }   
+    }
     getActualWeatherConditions(cityName);
 }
 
-function getActualWeatherConditions(cityName){
+function getActualWeatherConditions(cityName) {
     var city = cityName;
-    var key = '33dbe3b930c23ad2c7a0630b49f3e440';   
+    var key = '33dbe3b930c23ad2c7a0630b49f3e440';
 
-    $.get('http://api.openweathermap.org/data/2.5/weather', {q:city, appid:key, units: 'metric'},  function(data) {
-            var zm = '';
-            $.each(data.weather, function(index, val){
-                zm +=  data.name + " " + data.main.temp + ' ' + val.main;
-            });
-            console.log(zm);
-        }, 'json'); 
+    $.get('http://api.openweathermap.org/data/2.5/weather', { q: city, appid: key, units: 'metric' }, function (data) {
+        var zm = '';
+        $.each(data.weather, function (index, val) {
+            zm += data.name + " " + data.main.temp + ' ' + val.main;
+        });
+        console.log(zm);
+    }, 'json');
 
 }
 
@@ -540,7 +565,7 @@ $(document).ready(function () {
         var url = "https://api.openweathermap.org/data/2.5/forecast";
 
         $.get(url, { q: city, appid: key, units: 'metric' }, function (data) {
-          
+
             dateUTC = [];
             temp = [];
             for (let i = 0; i < data.list.length; i += 8) {

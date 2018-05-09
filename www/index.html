@@ -83,7 +83,6 @@
     <!-- Wardrobe main-->
     <div data-role="page" id="main">
         <div class="navbar">
-            <!-- TODO: Do zmiany, id musi być unikalne! Dodać funkcje w js z nazwą i onclick do każdego div z mobile-nav -->
             <div class="mobile-nav">
                 <i class="fa fa-bars pull-right menu-icon"></i>
             </div>
@@ -99,7 +98,8 @@
                         <span class="fa-li">
                             <i class="fas fa-question" aria-hidden="true"></i>
                         </span>
-                        <a href="#lottery">Draw</a>
+                        <a id="btnDraw">Draw</a>
+                        <div id="hideWardrobeDraw"></div>
                     </li>
                     <li>
                         <span class="fa-li">
@@ -181,7 +181,7 @@
             </div>
 
         </div>
-        <p id="war-nr"></p>    
+        <p id="war-nr"></p>
         <!-- jakby ktoś tu coś kombinował z nazwami kategorii to niech zmieni też id każdej z nich -->
         <div class="wear" id="wear">
             <span class="rags" id="Tees & Sweaters">
@@ -197,7 +197,7 @@
                     <img src="img/tops.svg">
                 </a> Tops</span>
             <span class="rags" id="Skirts & Shorts">
-                <a href="#clothes" >
+                <a href="#clothes">
                     <img src="img/skirt.svg" alt="Skirts & Shorts">
                 </a> Skirts & Shorts</span>
             <span class="rags" id="Trousers">
@@ -300,7 +300,7 @@
                 <i class="fas fa-plus"></i>
             </button>
         </div>
-        
+
 
     </div>
 
@@ -358,19 +358,19 @@
                             <div class="row" id="target">
                                 <div class="col-sm-2">
                                     <div class="oneline">
-                                    <span>Category:</span>
-                                    <div class="categories styled-select">
-                                        <select class="form-control" id="selectCategory">
-                                            <option value="choose-one" data-placeholder="true">Select</option>
-                                            <option>Tops & Sweaters</option>
-                                            <option>Dresses</option>
-                                            <option>Skirts & Shorts</option>
-                                            <option>Trousers</option>
-                                            <option>Outerwear</option>
-                                            <option>Footwear</option>
-                                            <option>Headgear</option>
-                                        </select>
-                                    </div>
+                                        <span>Category:</span>
+                                        <div class="categories styled-select">
+                                            <select class="form-control" id="selectCategory">
+                                                <option value="choose-one" data-placeholder="true">Select</option>
+                                                <option>Tops & Sweaters</option>
+                                                <option>Dresses</option>
+                                                <option>Skirts & Shorts</option>
+                                                <option>Trousers</option>
+                                                <option>Outerwear</option>
+                                                <option>Footwear</option>
+                                                <option>Headgear</option>
+                                            </select>
+                                        </div>
                                     </div>
                                     <form>
                                         <div class="ranges">
