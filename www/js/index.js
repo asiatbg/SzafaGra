@@ -269,10 +269,9 @@ function moveToWardrobeCats(getElement) {
 
 
 
-
+var ul = document.createElement("ul");
 // loading wardrobes to #main and Draw
 function loadWardrobes() {
-    let ul = document.createElement("ul");
     ul.setAttribute('id', 'hideShowWardrobe');
     hideWardrobeDraw.appendChild(ul);
     if (isUserSignedIn == false)
@@ -485,6 +484,19 @@ $(document).ready(function () {
 
             $('.menu-wardrobe').append(warName);
             moveToWardrobeCats(warName);
+
+
+            var li = document.createElement("li");
+            var snippet = document.createTextNode(warName);
+
+            li.id = warName;
+            ul.appendChild(li);
+
+            li = document.getElementById(warName);
+            var a = document.createElement('a');
+            a.href = "#lottery";
+            a.appendChild(snippet);
+            li.appendChild(a);
             warName = '';
         }
     });
