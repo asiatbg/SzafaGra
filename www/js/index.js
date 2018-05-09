@@ -450,18 +450,9 @@ $(document).ready(function () {
         }                        
     });
 
-    /*
-    function buttons() {
-        var x = document.getElementById("buttons");
-        if (x.style.display === "none") {
-            x.style.display = "block";
-        } else {
-            x.style.display = "none";
-        }
-    } */
-
+    //diplaying options to get picture from
     $(".btn-slide").click(function () {
-        $("#btnFloatingAction").slideToggle();
+        $(".btnFloatingAction").slideToggle();
     });
 
     // display wardrobe with given name

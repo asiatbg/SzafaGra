@@ -495,7 +495,7 @@ label {
     
 }
 
-.dropup > #btnFloatingAction > li {
+.dropup > .btnFloatingAction > li {
     list-style-type: none;
     margin: 10px;
 }
@@ -514,7 +514,7 @@ label {
     font-size: 20px;
 }
 
-#btnFloatingAction
+.btnFloatingAction
 {
     position:fixed;
     width: 70px;
