@@ -19,7 +19,8 @@ const txtEmailReset = document.getElementById('txtEmailReset');
 const btnSendPass = document.getElementById('btnSendPass');
 const btnAcceptImage = document.getElementById('btnAcceptImage');
 const hideWardrobeDraw = document.getElementsByClassName("hideWardrobeDraw");
-var wardrobe, category, warName, selectedCategory, selectedWeather, ul, li, snippet, a, text;
+var wardrobe, category, warName, selectedCategory, selectedWeather = [], ul, li, snippet, a, text;
+let wardrobeNameForDraw = "";
 
 // Sign up with email and password
 btnSignUp.addEventListener('click', function () {
@@ -184,7 +185,7 @@ function displayImage(imgUri) {
         const img = document.createElement("img");
         img.id = "addedImg";
         img.src = 'data:image/png;base64,' + imgUri;
-        img.style.width = "100%";
+        img.style.height = "100%";
         containerImg.appendChild(img);
     } else {
         document.getElementById('addedImg').src = 'data:image/png;base64,' + imgUri;
@@ -204,7 +205,7 @@ function uploadToDatabase(downloadURL) {
     var minTemp = $('#range-from').val();
     var maxTemp = $('#range-to').val();
 
-    if (minTemp == '' || maxTemp == '' || selectedCategory == '' || selectedWeather) {
+    if (minTemp == '' || maxTemp == '' || selectedCategory == '' || selectedWeather == '') {
         alert("Upload failed, you must fill in all fields!");
         return;
     }
@@ -216,7 +217,7 @@ function uploadToDatabase(downloadURL) {
         category: selectedCategory,
         minTemp: minTemp,
         maxTemp: maxTemp,
-        weather: selectedWeather
+        weather: { selectedWeather }
     };
     updates['Users/' + getCurrentUser().uid + '/' + wardrobe + '/' + selectedCategory + '/' + postKey] = postData;
     firebase.database().ref().update(updates);
@@ -250,6 +251,7 @@ function uploadToStorage(imgUri) {
 }
 
 btnAcceptImage.addEventListener('click', function () {
+    console.log(getValueOfSelect());
     const imgUri = document.getElementById('addedImg').src;
     uploadToStorage(imgUri);
     window.location.href = '#wardrobe-cats';
@@ -265,7 +267,11 @@ function moveToWardrobeCats(getElement) {
     });
 }
 
-
+//get clicked name of wardrobe
+$('.hideWardrobeDraw').click(function (event) {
+    wardrobeNameForDraw = $(event.target).text();
+    console.log(wardrobeNameForDraw);
+});
 
 
 // loading wardrobes to #main and Draw
@@ -444,7 +450,13 @@ function getActualWeatherConditions(cityName) {
 
 }
 
-
+function getValueOfSelect() {
+    var selectWeather = document.getElementsByClassName('selectWeather');
+    for (let x = 0; x < selectWeather.length; x++) {
+        selectedWeather.push(selectWeather[x].value);
+    }
+    return selectedWeather;
+}
 //Mobile navigation
 $(document).ready(function () {
 
@@ -511,6 +523,7 @@ $(document).ready(function () {
         }
     });
 
+
     // get the category name, launch function for loading clothes
     $('#wear span').click(function () {
         category = $(this).attr("id");
@@ -523,9 +536,13 @@ $(document).ready(function () {
     });
 
     // get the selected by user weather
-    $('#selectWeather').change(function () {
-        selectedWeather = $('#selectWeather').val();
-    });
+    // $('.selectWeather').change(function () {
+    //     selectedWeather = $('.selectWeather').val();
+    //     console.log(selectedWeather);
+
+    // });
+
+
 
     //dodawanie list z tagami do zdjecia
     var target = $("div#target");
@@ -537,9 +554,8 @@ $(document).ready(function () {
             "class": "input-group styled-select oneline"
         });
         var input = $("<select><option>Select</option><option>Rain</option><option>Thunderstorm</option><option>Drizzle</option><option>Snow</option><option>Clear</option><option>Clouds</option></select>", {
-            "class": "form-control",
+            "class": "form-control selectWeather",
             "name": "",
-
         });
         var span = $("<span/>", {
             "class": "input-group-btn"
