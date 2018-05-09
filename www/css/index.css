@@ -759,14 +759,33 @@ span.fa-plus {
 /* loading pictures */
 
 
+
+#putImage {
+    margin-top: 50px;
+}
+
 .contentImage {
+    /*
     display: inline-block;
     max-width: 98%;
-    height: 48%; 
     width: 48%;
+    height: auto; 
     margin: 1%;
-    object-fit: contain;
+    object-fit: contain;*/
+    
+    float:left;
+        width:140px;
+        height:140px;
+        overflow:hidden;
+    margin-bottom: 20px;
+    margin-left: 20px;
+    box-shadow: 0px 0px 7px rgba(0, 0, 0, 0.25);
 }
+
+#putImage > div.i > img.contentImage {
+        width:150px;    <-- notice these
+        height: auto;   <-- have switched
+    }
 
 /*chart */
 .aspect-ratio {
@@ -829,6 +848,7 @@ span.fa-plus {
 .hideWardrobeDraw {
     display: none;
 }
+
 .hideWardrobeDraw ul {
     padding: 0px;
     
@@ -837,6 +857,7 @@ span.fa-plus {
     list-style: none;
     margin-top: -11px;
 }
+
 .btn-love {
     position: fixed;
     background: #2F80ED;
