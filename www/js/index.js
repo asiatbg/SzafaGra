@@ -47,8 +47,8 @@ btnSignUp.addEventListener('click', function () {
 
 //Login with email and password
 btnLogin.addEventListener('click', e => {
-    const email = "asiak995@gmail.com"; //txtEmailLogin.value;
-    const password = "gggggg"; // txtPasswordLogin.value;
+    const email = txtEmailLogin.value;
+    const password = txtPasswordLogin.value;
     if (password == "" || email == "") {
         alert("Fill in all fields");
         return;
@@ -241,7 +241,6 @@ function uploadToStorage(imgUri) {
     var storageRef = firebase.storage().ref(getCurrentUser().uid + '/' + wardrobe + '/' + fileName);
     var uploadTask = storageRef.putString(imgStorage, 'data_url');
     uploadTask.on('state_changed', function (snapshot) {
-
     }, function (error) {
         console.log(error)
     }, function () {
@@ -320,12 +319,11 @@ function loadWardrobes() {
                 a.appendChild(snippet);
                 li.appendChild(a);
             }
-
         }
-
     });
 }
 
+//check if user is logged
 function isUserSignedIn() {
     var token = getCurrentUser().uid;
     if (getCurrentUser()) {
@@ -355,7 +353,6 @@ function loadClothes() {
                 $(div).addClass("i");
                 $("#putImage").append(div);
             }
-
             var image = document.createElement("img");
             image.src = currentObj.url;
             $(image).addClass("contentImage");
@@ -389,12 +386,11 @@ function deleteDecision() {
         return true;
 
     return false;
-
 }
 
 // deleting image on taphold
 function tapImage(event) {
-    console.log("tap tap");
+    
     if (deleteDecision()) {
         var imageID = $(this).attr("id");
         $("#" + imageID).remove();
@@ -460,22 +456,18 @@ function getValueOfSelect() {
 //Mobile navigation
 $(document).ready(function () {
 
+    // activate and deactivate menu exept onclik on Draw
     $('.navbar').click(function (event) {
-        $('.nav').toggleClass('active');
+        var id = $(event.target).attr("class");       
+        if (id != "Draw")
+        {
+            $('.nav').toggleClass('active');
+        }                        
     });
 
-    /*
-    function buttons() {
-        var x = document.getElementById("buttons");
-        if (x.style.display === "none") {
-            x.style.display = "block";
-        } else {
-            x.style.display = "none";
-        }
-    } */
-
+    //diplaying options to get picture from
     $(".btn-slide").click(function () {
-        $("#btnFloatingAction").slideToggle();
+        $(".btnFloatingAction").slideToggle();
     });
 
     // display wardrobe with given name
@@ -590,15 +582,12 @@ $(document).ready(function () {
         $(target).remove();
     });
 
-
-
     // get data for chart
     var dateUTC = [];
     var temp = [];
     var daysOfWeek;
     $("#getWeather").click(function () {
         var city = $("#city").val();
-
         var key = '33dbe3b930c23ad2c7a0630b49f3e440';
         var url = "https://api.openweathermap.org/data/2.5/forecast";
 
@@ -609,9 +598,7 @@ $(document).ready(function () {
             for (let i = 0; i < data.list.length; i += 8) {
                 dateUTC.push(data.list[i].dt);
                 temp.push(parseInt(data.list[i].main.temp));
-
             }
-
             daysOfWeek = [];
             if (dateUTC.length == 5 && temp.length == 5) {
                 daysOfWeek = getDayOfWeek(dateUTC);
