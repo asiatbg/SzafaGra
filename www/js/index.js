@@ -18,13 +18,8 @@ const btnLogOut = document.getElementById('btnLogOut');
 const txtEmailReset = document.getElementById('txtEmailReset');
 const btnSendPass = document.getElementById('btnSendPass');
 const btnAcceptImage = document.getElementById('btnAcceptImage');
-const btnDraw = document.getElementById('btnDraw');
-const hideWardrobeDraw = document.getElementById('hideWardrobeDraw');
-var wardrobe;
-var category;
-var warName;
-var selectedCategory;
-var selectedWeather;
+const hideWardrobeDraw = document.getElementsByClassName("hideWardrobeDraw");
+var wardrobe, category, warName, selectedCategory, selectedWeather, ul, li, snippet, a, text;
 
 // Sign up with email and password
 btnSignUp.addEventListener('click', function () {
@@ -51,8 +46,8 @@ btnSignUp.addEventListener('click', function () {
 
 //Login with email and password
 btnLogin.addEventListener('click', e => {
-    const email = txtEmailLogin.value;
-    const password = txtPasswordLogin.value;
+    const email = "asiak995@gmail.com"; //txtEmailLogin.value;
+    const password = "gggggg"; // txtPasswordLogin.value;
     if (password == "" || email == "") {
         alert("Fill in all fields");
         return;
@@ -130,13 +125,16 @@ function logOut() {
 }
 
 //Show and hide wardrobe in lottery
-btnDraw.addEventListener('click', function () {
-    if (hideWardrobeDraw.style.display === "block") {
-        hideWardrobeDraw.style.display = "none";
-    } else {
-        hideWardrobeDraw.style.display = "block";
+function btnDraw() {
+    for (let i = 0; i < hideWardrobeDraw.length; i++) {
+        if (hideWardrobeDraw[i].style.display === "block") {
+            hideWardrobeDraw[i].style.display = "none";
+        } else {
+            hideWardrobeDraw[i].style.display = "block";
+        }
     }
-});
+
+}
 
 //Take picture from gallery
 function openFilePicker(selection) {
@@ -269,11 +267,10 @@ function moveToWardrobeCats(getElement) {
 
 
 
-var ul = document.createElement("ul");
+
 // loading wardrobes to #main and Draw
 function loadWardrobes() {
-    ul.setAttribute('id', 'hideShowWardrobe');
-    hideWardrobeDraw.appendChild(ul);
+    $(".hideWardrobeDraw").empty();
     if (isUserSignedIn == false)
         return;
 
@@ -296,21 +293,28 @@ function loadWardrobes() {
             }).appendTo('.menu-wardrobe');
 
             moveToWardrobeCats(wardrobeAmountArray[i - 1]);
-            var text = $("<span></span>").text(wardrobeAmountArray[i - 1]);
+            text = $("<span></span>").text(wardrobeAmountArray[i - 1]);
             $('.menu-wardrobe').append(text);
 
             // Add li to Draw wardrobe
-            var li = document.createElement("li");
-            var snippet = document.createTextNode(wardrobeAmountArray[i - 1]);
+            for (let x = 0; x < hideWardrobeDraw.length; x++) {
+                ul = document.createElement("ul");
+                ul.classList.add("hideShowWardrobe");
+                hideWardrobeDraw[x].appendChild(ul);
 
-            li.id = wardrobeAmountArray[i - 1];
-            ul.appendChild(li);
+                // Put li and a tags into ul in div
+                li = document.createElement("li");
+                snippet = document.createTextNode(wardrobeAmountArray[i - 1]);
 
-            li = document.getElementById(wardrobeAmountArray[i - 1]);
-            var a = document.createElement('a');
-            a.href = "#lottery";
-            a.appendChild(snippet);
-            li.appendChild(a);
+                li.classList.add(wardrobeAmountArray[i - 1]);
+                ul.appendChild(li);
+
+                a = document.createElement('a');
+                a.href = "#lottery";
+                a.appendChild(snippet);
+                li.appendChild(a);
+            }
+
         }
 
     });
@@ -486,17 +490,23 @@ $(document).ready(function () {
             moveToWardrobeCats(warName);
 
 
-            var li = document.createElement("li");
-            var snippet = document.createTextNode(warName);
+            for (let x = 0; x < hideWardrobeDraw.length; x++) {
+                ul = document.createElement("ul");
+                ul.classList.add("hideShowWardrobe");
+                hideWardrobeDraw[x].appendChild(ul);
 
-            li.id = warName;
-            ul.appendChild(li);
+                // Put li and a tags into ul in div
+                li = document.createElement("li");
+                snippet = document.createTextNode(warName);
 
-            li = document.getElementById(warName);
-            var a = document.createElement('a');
-            a.href = "#lottery";
-            a.appendChild(snippet);
-            li.appendChild(a);
+                li.classList.add(warName);
+                ul.appendChild(li);
+
+                a = document.createElement('a');
+                a.href = "#lottery";
+                a.appendChild(snippet);
+                li.appendChild(a);
+            }
             warName = '';
         }
     });

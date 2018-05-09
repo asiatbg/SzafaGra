@@ -826,14 +826,14 @@ span.fa-plus {
 
 /*lottery*/
 
-#hideWardrobeDraw {
+.hideWardrobeDraw {
     display: none;
 }
-#hideWardrobeDraw ul {
+.hideWardrobeDraw ul {
     padding: 0px;
     
 }
-#hideWardrobeDraw li {
+.hideWardrobeDraw li {
     list-style: none;
     margin-top: -11px;
 }
