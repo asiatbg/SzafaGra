@@ -445,14 +445,15 @@ function getActualWeatherConditions(cityName) {
     var key = '33dbe3b930c23ad2c7a0630b49f3e440';
 
     $.get('http://api.openweathermap.org/data/2.5/weather', { q: city, appid: key, units: 'metric' }, function (data) {
-        var zm = '';
+        var zm = '', mainWeatherCondition = '';
         $.each(data.weather, function (index, val) {
             zm = data.main.temp;
+            mainWeatherCondition = val.main;
         });
         if (zm == "") {
             zm = "15";
         }
-        drawClothes(wardrobeNameForDraw, parseInt(zm));
+        drawClothes(wardrobeNameForDraw, parseInt(zm), mainWeatherCondition);
         console.log(zm);
     }, 'json');
 
@@ -464,50 +465,46 @@ function getValueOfSelect() {
     for (let x = 0; x < selectWeather.length; x++) {
         if (selectWeather[x].value != null) {
             selectedWeather.push(selectWeather[x].value);
-            console.log("Get value of selectWeather " + selectWeather[x].value);
-            console.log("Get value of x: " + x);
         }
 
     }
-    console.log("Print selectedWeather: " + selectedWeather);
-
     return selectedWeather;
 }
 const randomAgain = document.getElementById('randomAgain');
 randomAgain.addEventListener('click', function () {
-    drawClothes(wardrobeNameForDraw);
+    getCityToDraw();
 });
-function drawClothes(wardrobeName, actualTemperature) {
+function drawClothes(wardrobeName, actualTemperature, actualWeatherCondition) {
+    $("#putImgFromLottery").empty();
+
     return firebase.database().ref('Users/' + getCurrentUser().uid + '/' + wardrobeName + '/').once('value', function (snapshot) {
         var postObject = snapshot.val();
         if (postObject === null) {
             return;
         }
-        console.log(postObject["Headgear"]);
+
         const generatedClothes = [];
 
         if (postObject["Headgear"] != null) {
             // const generatedTopsObject = generateRandomClothObject(postObject, ["Headgear"], actualTemperature);
-            generatedClothes.push(generateRandomClothObject(postObject, ["Headgear"], actualTemperature));
+            generatedClothes.push(generateRandomClothObject(postObject, ["Headgear"], actualTemperature, actualWeatherCondition));
         }
         if (postObject["Outerwear"] != null) {
             // const generatedTopsObject = generateRandomClothObject(postObject, ["Outerwear"], actualTemperature);
-            generatedClothes.push(generateRandomClothObject(postObject, ["Outerwear"], actualTemperature));
+            generatedClothes.push(generateRandomClothObject(postObject, ["Outerwear"], actualTemperature, actualWeatherCondition));
 
         }
-        if (postObject["Tops"] != null || postObject["Tees & Sweaters"] != null) {
-            // const generatedTopsObject = generateRandomClothObject(postObject, ["Tops", "Tees & Sweaters"], actualTemperature);
-            generatedClothes.push(generateRandomClothObject(postObject, ["Tops", "Tees & Sweaters"], actualTemperature));
-        }
-        const onlyDresses = postObject["Dresses"] != null && postObject["Trousers"] == null && postObject["Skirts & Shorts"] == null
-        const onlyTrousersOrSkirtsShorts = (postObject["Trousers"] != null || postObject["Skirts & Shorts"] != null) && postObject["Dresses"] == null
+
+        const onlyDresses = postObject["Dresses"] != null && postObject["Trousers"] == null && postObject["Skirts & Shorts"] == null && postObject["Tops"] == null && postObject["Tees & Sweaters"] == null;
+        const onlyTrousersOrSkirtsShortsAndTopsOrTeesSweaters = ((postObject["Trousers"] != null || postObject["Skirts & Shorts"] != null) && (postObject["Tops"] != null || postObject["Tees & Sweaters"] != null)) && postObject["Dresses"] == null;
 
         if (onlyDresses) {
             // const generatedTopsObject = generateRandomClothObject(postObject, ["Dresses"], actualTemperature);
-            generatedClothes.push(generateRandomClothObject(postObject, ["Dresses"], actualTemperature));
-        } else if (onlyTrousersOrSkirtsShorts) {
+            generatedClothes.push(generateRandomClothObject(postObject, ["Dresses"], actualTemperature, actualWeatherCondition));
+        } else if (onlyTrousersOrSkirtsShortsAndTopsOrTeesSweaters) {
             // const generatedFootwearObject = generateRandomClothObject(postObject, ["Trousers", "Skirts & Shorts"], actualTemperature);
-            generatedClothes.push(generateRandomClothObject(postObject, ["Trousers", "Skirts & Shorts"], actualTemperature));
+            generatedClothes.push(generateRandomClothObject(postObject, ["Tops", "Tees & Sweaters"], actualTemperature, actualWeatherCondition));
+            generatedClothes.push(generateRandomClothObject(postObject, ["Trousers", "Skirts & Shorts"], actualTemperature, actualWeatherCondition));
 
         } else if (postObject["Dresses"] == null && postObject["Trousers"] == null && postObject["Skirts & Shorts"] == null) {
             //Do nothing
@@ -515,35 +512,35 @@ function drawClothes(wardrobeName, actualTemperature) {
             const whatShouldIWear = Math.floor(Math.random() * 2);
             if (whatShouldIWear == 0) {
                 // const generatedTopsObject = generateRandomClothObject(postObject, ["Dresses"], actualTemperature);
-                generatedClothes.push(generateRandomClothObject(postObject, ["Dresses"], actualTemperature));
+                generatedClothes.push(generateRandomClothObject(postObject, ["Dresses"], actualTemperature, actualWeatherCondition));
 
             } else {
                 // const generatedFootwearObject = generateRandomClothObject(postObject, ["Trousers", "Skirts & Shorts"], actualTemperature);
-                generatedClothes.push(generateRandomClothObject(postObject, ["Trousers", "Skirts & Shorts"], actualTemperature));
+                generatedClothes.push(generateRandomClothObject(postObject, ["Tops", "Tees & Sweaters"], actualTemperature, actualWeatherCondition));
+                generatedClothes.push(generateRandomClothObject(postObject, ["Trousers", "Skirts & Shorts"], actualTemperature, actualWeatherCondition));
 
             }
         }
         if (postObject["Footwear"] != null) {
             // const generatedFootwearObject = generateRandomClothObject(postObject, ["Footwear"], actualTemperature);
-            generatedClothes.push(generateRandomClothObject(postObject, ["Footwear"], actualTemperature));
+            generatedClothes.push(generateRandomClothObject(postObject, ["Footwear"], actualTemperature, actualWeatherCondition));
             // console.log(generatedFootwearObject);
         }
 
+        //Get all genereted clothes and put in slider
         var img;
-        const putImgFromLottery = document.getElementsByClassName('slide');
+        const putImgFromLottery = document.getElementById('putImgFromLottery');
         for (var i = 0; i < generatedClothes.length; i++) {
 
             img = document.createElement("img");
             img.src = generatedClothes[i]["url"];
-            // ul.classList.add("hideShowWardrobe");
-            console.log(putImgFromLottery[i]);
-            putImgFromLottery[i].appendChild(img);
+            img.classList.add("contentImage");
+            putImgFromLottery.appendChild(img);
         }
-
     });
 }
 
-function generateRandomClothObject(postObject, categoryNames, actualTemperature) {
+function generateRandomClothObject(postObject, categoryNames, actualTemperature, actualWeatherCondition) {
     const clothesAvailableForTemperature = [];
     for (var i = 0; i < categoryNames.length; i++) {
         if (postObject[categoryNames[i]] == null) {
@@ -554,18 +551,23 @@ function generateRandomClothObject(postObject, categoryNames, actualTemperature)
         let actualObject;
         for (var j = 0; j < clothesObjectKeys.length; j++) {
             actualObject = postObject[categoryNames[i]][clothesObjectKeys[j]];
+            let isObjectContainingWeather = false;
+            for (var k = 0; k < actualObject["selectedWeather"].length; k++) {
+                if (actualObject["selectedWeather"][k] == actualWeatherCondition) {
+                    isObjectContainingWeather = true;
+                    break;
+                }
+            }
+            if (!isObjectContainingWeather) {
+                continue;
+            }
+
             if (actualTemperature < parseInt(actualObject["maxTemp"].replace('°C', '')) &&
                 actualTemperature > parseInt(actualObject["minTemp"].replace('°C', ''))) {
                 clothesAvailableForTemperature.push(actualObject);
             }
         }
     }
-
-    // for (var j = 0; j < clothesAvailableForTemperature.length; j++) {
-    //     console.log(postObject[clothesAvailableForTemperature[j]["category"][clothesAvailableForTemperature[j]["url"]]]);
-    //     console.log(clothesAvailableForTemperature[j]["url"]);
-    // }
-
     const randomClothIndex = Math.floor(Math.random() * clothesAvailableForTemperature.length);
     return postObject[clothesAvailableForTemperature[randomClothIndex]["category"]][clothesAvailableForTemperature[randomClothIndex]["key"]];
 }
