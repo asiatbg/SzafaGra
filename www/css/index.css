@@ -806,9 +806,19 @@ span.fa-plus {
 }
 
 
-/* .input-container {
+/*weather buttons*/
+.input-container {
+    width: 100%;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    white-space: nowrap;
 
-} */
+    position: absolute;
+    height: 254px;
+    top: calc(50% - 254px/2 + 9px);
+}
 
 .input-container input {
    
@@ -818,23 +828,23 @@ span.fa-plus {
     border: none;
     transition: opacity 0.3s;
     left: calc(50% - 250px/2 + 0.5px);
-    top: calc(30% - 50px/2 - 105.5px);
+    top: calc(30% - 50px/2 - 145px);
 
-    width: 220px;
+    width: 215px;
     height: 50px;
-    padding-left: 30px;
+    padding-left: 35px;
     color: #FFFFFF;
 
  
 }
-.fa-cloud{
+.fa-cloud {
     position: absolute;
     color: white;
     left: calc(50% - 225px/2 - 0.5px);
-    top: calc(-600% - 49px/2 + 85px);
+    top: calc(50% - 50px/2 - 6px);
     margin-bottom: 43px;
     vertical-align: middle; 
-   
+    display:table-cell;
 }
 .input-container button {  
 
@@ -842,7 +852,7 @@ span.fa-plus {
     width: 250px;
     height: 50px;
     left: calc(50% - 247px/2 - 0.5px);
-    top: calc(30% - 49px/2 - 43.5px);
+    top: calc(30% - 49px/2 - 80px);
     background: #62C277;
     border: 1px solid rgba(0, 0, 0, 0.28);
     box-sizing: border-box;
