@@ -19,12 +19,13 @@ const txtEmailReset = document.getElementById('txtEmailReset');
 const btnSendPass = document.getElementById('btnSendPass');
 const btnAcceptImage = document.getElementById('btnAcceptImage');
 const hideWardrobeDraw = document.getElementsByClassName('hideWardrobeDraw');
+const hideFavouriteSet = document.getElementsByClassName('hideFavouriteSet');
 const btnFavoriteSet = document.getElementById('btnFavoriteSet');
 let generatedClothes = [];
 let favoritesSetUrl = [];
 var wardrobe, category, warName, selectedCategory, selectedWeather = [], ul, li, snippet, a, text;
 let wardrobeNameForDraw = "";
-
+var ulFav, liFav, snippetFav, aFav; 
 // Sign up with email and password
 btnSignUp.addEventListener('click', function () {
     const email = txtEmailRegistration.value;
@@ -138,6 +139,16 @@ function btnDraw() {
         }
     }
 
+}
+
+function btnFav(){
+	for (let i = 0; i < hideFavouriteSet.length; i++) {
+        if (hideFavouriteSet[i].style.display === "block") {
+            hideFavouriteSet[i].style.display = "none";
+        } else {
+            hideFavouriteSet[i].style.display = "block";
+        }
+    }
 }
 
 //Take picture from gallery
@@ -282,10 +293,38 @@ $('.hideWardrobeDraw').click(function (event) {
 
 });
 
+$('.hideFavouriteSet').click(function (event) {
+    wardrobeNameForFav = $(event.target).text();
+    getFavoritesSet(wardrobeNameForFav);
+
+});
+
+function loadToNavbar(element, array, HTMLClass, link){
+	for (var i = 0; i < element.length; i++) {
+                ul = document.createElement("ul");
+                ul.classList.add(HTMLClass);
+  
+                hideWardrobeDraw[i].appendChild(ul);
+
+                // Put li and a tags into ul in div
+                li = document.createElement("li");
+                snippet = document.createTextNode(array[i - 1]);
+
+                li.classList.add(array[i - 1]);
+                ul.appendChild(li);
+
+                a = document.createElement('a');
+                a.href = link;
+                a.appendChild(snippet);
+                li.appendChild(a);
+            }
+};
+
 
 // loading wardrobes to #main and Draw
 function loadWardrobes() {
     $(".hideWardrobeDraw").empty();
+    $(".hideShowFavourites").empty();
     if (isUserSignedIn == false)
         return;
 
@@ -301,10 +340,12 @@ function loadWardrobes() {
 
             $('.menu-wardrobe').append(createWardrobeImg(wardrobeAmountArray[i - 1]));
             moveToWardrobeCats(wardrobeAmountArray[i - 1]);
+
             // Add li to Draw wardrobe
             for (let x = 0; x < hideWardrobeDraw.length; x++) {
                 ul = document.createElement("ul");
                 ul.classList.add("hideShowWardrobe");
+  
                 hideWardrobeDraw[x].appendChild(ul);
 
                 // Put li and a tags into ul in div
@@ -319,6 +360,27 @@ function loadWardrobes() {
                 a.appendChild(snippet);
                 li.appendChild(a);
             }
+            // Add li to favourites 
+            for (var j = 0; j < hideFavouriteSet.length; j++) {
+            	
+                ulFav = document.createElement("ul");
+                ulFav.classList.add("hideShowFavourites");
+                hideFavouriteSet[j].appendChild(ulFav);
+
+                // Put li and a tags into ul in div
+                liFav = document.createElement("li");
+                snippetFav = document.createTextNode(wardrobeAmountArray[i - 1]);
+
+                liFav.classList.add(wardrobeAmountArray[i - 1]);
+                ulFav.appendChild(liFav);
+
+                aFav = document.createElement('a');
+                aFav.href = "#favs-all";
+                aFav.appendChild(snippetFav);
+                liFav.appendChild(aFav);
+            }
+
+             
         }
     });
 }
@@ -502,7 +564,7 @@ function drawClothes(wardrobeName, actualTemperature, actualWeatherCondition) {
         var tops = (postObject["Tops"] != null)? true : false;
         var teesSweaters = (postObject["Tees & Sweaters"] != null)? true : false;
        
-        if (dress && trousers == false && skirtsShorts == false && teesSweaters == false) 
+        if (dress && trousers == false && skirtsShorts == false && tops == false && teesSweaters == false) 
         {           
             generatedClothes.push( generateRandomClothObject(postObject, ["Dresses"], actualTemperature, actualWeatherCondition) );
         } 
@@ -514,7 +576,7 @@ function drawClothes(wardrobeName, actualTemperature, actualWeatherCondition) {
         } 
         else if (dress == false && trousers == false && skirtsShorts == false) 
         {
-            alert("YOu don't have enough clothes added to draw from to actual weather conditions: " + actualTemperature + '°C ' + actualWeatherCondition);
+            alert("You don't have enough clothes added to draw from to actual weather conditions: " + actualTemperature + '°C ' + actualWeatherCondition);
             return;
         } 
         else 
@@ -547,9 +609,6 @@ function drawClothes(wardrobeName, actualTemperature, actualWeatherCondition) {
             putImgFromLottery.appendChild(img);
         }
     });
-
-
-
 }
 
 btnFavoriteSet.addEventListener('click', function () {
@@ -593,21 +652,31 @@ function generateRandomClothObject(postObject, categoryNames, actualTemperature,
     const randomClothIndex = Math.floor(Math.random() * clothesAvailableForTemperature.length);
     return postObject[clothesAvailableForTemperature[randomClothIndex]["category"]][clothesAvailableForTemperature[randomClothIndex]["key"]];
 }
-
-function getFavoritesSet() {
-    console.log(wardrobeNameForDraw);
-    return firebase.database().ref('Users/' + getCurrentUser().uid + '/' + wardrobeNameForDraw + '/').once('value', function (snapshot) {
+ 
+function getFavoritesSet(wardrobeNameForFav) {
+	$("#putImgFavourites").empty();
+	var favImg;
+    const putImgFav = document.getElementById('putImgFavourites');
+    
+    return firebase.database().ref('Users/' + getCurrentUser().uid + '/' + wardrobeNameForFav + '/').once('value', function (snapshot) {
         var postObject = snapshot.val();
         if (postObject === null) {
             return;
         }
         const favoritesObjectKeys = Object.getOwnPropertyNames(postObject["favorites"]).toString().split(",");
         for (var i = 0; i < favoritesObjectKeys.length; i++) {
+
             actualObject = postObject["favorites"][favoritesObjectKeys[i]];
             console.log(postObject["favorites"][favoritesObjectKeys[i]]);
+
             for (var j = 0; j < actualObject.length; j++) {
+
                 favoritesSetUrl.push(actualObject[j]["url"]);
                 console.log(actualObject[j]["url"]);
+				favImg = document.createElement("img");
+				favImg.src = actualObject[j]["url"];
+				favImg.classList.add("contentImage");
+				putImgFav.appendChild(favImg);
             }
 
         }
@@ -632,12 +701,12 @@ function createWardrobeImg(name) {
 //Mobile navigation
 $(document).ready(function () {
 
-    // activate and deactivate menu exept onclik on Draw
+    // activate and deactivate menu except onclik on Draw and Favourites
     $('.navbar').click(function (event) {
         var id = $(event.target).attr("class");
-        if (id != "Draw") {
+        if (id != "Draw" && id != "favourites") {
             $('.nav').toggleClass('active');
-        }
+        }  
     });
 
     //diplaying options to get picture from
@@ -678,6 +747,26 @@ $(document).ready(function () {
                 a.href = "#lottery";
                 a.appendChild(snippet);
                 li.appendChild(a);
+            }
+            
+            for (var j = 0; j < hideFavouriteSet.length; j++) {
+            	// favvvvv
+                ulFav = document.createElement("ul");
+                ulFav.classList.add("hideShowFavourites");
+  
+                hideFavouriteSet[j].appendChild(ulFav);
+
+                // Put li and a tags into ul in div
+                liFav = document.createElement("li");
+                snippetFav = document.createTextNode( warName);
+
+                liFav.classList.add( warName);
+                ulFav.appendChild(liFav);
+
+                aFav = document.createElement('a');
+                aFav.href = "#favs-all";
+                aFav.appendChild(snippetFav);
+                liFav.appendChild(aFav);
             }
             warName = '';
         }
