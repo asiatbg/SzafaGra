@@ -18,7 +18,10 @@ const btnLogOut = document.getElementById('btnLogOut');
 const txtEmailReset = document.getElementById('txtEmailReset');
 const btnSendPass = document.getElementById('btnSendPass');
 const btnAcceptImage = document.getElementById('btnAcceptImage');
-const hideWardrobeDraw = document.getElementsByClassName("hideWardrobeDraw");
+const hideWardrobeDraw = document.getElementsByClassName('hideWardrobeDraw');
+const btnFavoriteSet = document.getElementById('btnFavoriteSet');
+let generatedClothes = [];
+
 var wardrobe, category, warName, selectedCategory, selectedWeather = [], ul, li, snippet, a, text;
 let wardrobeNameForDraw = "";
 
@@ -47,7 +50,7 @@ btnSignUp.addEventListener('click', function () {
 
 //Login with email and password
 btnLogin.addEventListener('click', e => {
-    const email =  txtEmailLogin.value;
+    const email = txtEmailLogin.value;
     const password = txtPasswordLogin.value;
     if (password == "" || email == "") {
         alert("Fill in all fields");
@@ -194,8 +197,7 @@ function displayImage(imgUri) {
 
 function setWardrobeName() {
     var name = prompt("Please enter wardrobe name, 10 characters max", "Ciuszki");
-    if (name == '')
-    {
+    if (name == '') {
         alert("Enter valid name!");
         return;
     }
@@ -292,10 +294,10 @@ function loadWardrobes() {
         var warNum = Object.getOwnPropertyNames(postObject).toString();
         var wardrobeAmountArray = warNum.split(",");
 
-        for (var i = 1; i <= wardrobeAmountArray.length; i++) {          
-            
-            $('.menu-wardrobe').append( createWardrobeImg(wardrobeAmountArray[i - 1]) );
-             moveToWardrobeCats( wardrobeAmountArray[i - 1] );
+        for (var i = 1; i <= wardrobeAmountArray.length; i++) {
+
+            $('.menu-wardrobe').append(createWardrobeImg(wardrobeAmountArray[i - 1]));
+            moveToWardrobeCats(wardrobeAmountArray[i - 1]);
             // Add li to Draw wardrobe
             for (let x = 0; x < hideWardrobeDraw.length; x++) {
                 ul = document.createElement("ul");
@@ -399,7 +401,7 @@ function tapImage(event) {
     }
 }
 
-function deleteWardrobe(wardrobeID) { 
+function deleteWardrobe(wardrobeID) {
     var ref = firebase.database().ref('Users/' + getCurrentUser().uid + '/' + wardrobeID + '/');
     ref.remove()
         .then(function () {
@@ -410,7 +412,7 @@ function deleteWardrobe(wardrobeID) {
         });
 }
 
-function tapWardrobe(event) { 
+function tapWardrobe(event) {
     if (deleteDecision()) {
         var wardrobeID = $(this).attr("id");
         $('#' + wardrobeID).get(0).nextSibling.remove(); // deleting span with wardrobe name
@@ -467,6 +469,8 @@ randomAgain.addEventListener('click', function () {
     getCityToDraw();
 });
 function drawClothes(wardrobeName, actualTemperature, actualWeatherCondition) {
+
+    getFavoritesSet();
     $("#putImgFromLottery").empty();
 
     return firebase.database().ref('Users/' + getCurrentUser().uid + '/' + wardrobeName + '/').once('value', function (snapshot) {
@@ -475,7 +479,7 @@ function drawClothes(wardrobeName, actualTemperature, actualWeatherCondition) {
             return;
         }
 
-        const generatedClothes = [];
+        generatedClothes = [];
 
         if (postObject["Headgear"] != null) {
             // const generatedTopsObject = generateRandomClothObject(postObject, ["Headgear"], actualTemperature);
@@ -530,7 +534,20 @@ function drawClothes(wardrobeName, actualTemperature, actualWeatherCondition) {
             putImgFromLottery.appendChild(img);
         }
     });
+
+
+
 }
+
+btnFavoriteSet.addEventListener('click', function () {
+    var postKey = firebase.database().ref('Users/' + getCurrentUser().uid + '/' + wardrobeNameForDraw + '/' + "favorites" + '/').push().key;
+    var updates = {};
+    var postData = generatedClothes;
+
+    updates['Users/' + getCurrentUser().uid + '/' + wardrobeNameForDraw + '/' + "favorites" + '/' + postKey] = postData;
+    firebase.database().ref().update(updates);
+    alert('successful send');
+});
 
 function generateRandomClothObject(postObject, categoryNames, actualTemperature, actualWeatherCondition) {
     const clothesAvailableForTemperature = [];
@@ -564,18 +581,34 @@ function generateRandomClothObject(postObject, categoryNames, actualTemperature,
     return postObject[clothesAvailableForTemperature[randomClothIndex]["category"]][clothesAvailableForTemperature[randomClothIndex]["key"]];
 }
 
- function createWardrobeImg(name) {
-        return $('<div/>') 
-            .append($('<img />').attr({
-                'id': name,
-                'src': 'img/wardrobe.svg',
-                'class': 'myWardrobe',
-                'href': '#wardrobe-cats',
-                
-            }))
-            .append($('<div/>')
-                .append(name));
-    }
+function getFavoritesSet() {
+    return firebase.database().ref('Users/' + getCurrentUser().uid + '/' + wardrobeNameForDraw + '/').once('value', function (snapshot) {
+        var postObject = snapshot.val();
+        if (postObject === null) {
+            return;
+        }
+        const favoritesObjectKeys = Object.getOwnPropertyNames(postObject["favorites"]).toString().split(",");
+        for (var i = 0; i < favoritesObjectKeys.length; i++) {
+            postObject["favorites"][favoritesObjectKeys[i]];
+            console.log(postObject["favorites"][favoritesObjectKeys[i]]);
+
+        }
+    });
+}
+
+
+function createWardrobeImg(name) {
+    return $('<div/>')
+        .append($('<img />').attr({
+            'id': name,
+            'src': 'img/wardrobe.svg',
+            'class': 'myWardrobe',
+            'href': '#wardrobe-cats',
+
+        }))
+        .append($('<div/>')
+            .append(name));
+}
 
 
 //Mobile navigation
@@ -594,7 +627,7 @@ $(document).ready(function () {
         $(".btnFloatingAction").slideToggle();
     });
 
-   
+
 
     // display wardrobe with given name
     $('.btn-war').click(function () {
@@ -604,15 +637,13 @@ $(document).ready(function () {
             alert('This name already exist!');
             return;
         }
-        else if (warName == '' )
-        {
+        else if (warName == '') {
             return;
-        } 
-        else 
-        {
+        }
+        else {
             warName = warName.replace(/\s/g, '');
             $('.menu-wardrobe').append(createWardrobeImg(warName));
-            moveToWardrobeCats(warName);            
+            moveToWardrobeCats(warName);
             for (let x = 0; x < hideWardrobeDraw.length; x++) {
                 ul = document.createElement("ul");
                 ul.classList.add("hideShowWardrobe");
@@ -631,7 +662,7 @@ $(document).ready(function () {
                 li.appendChild(a);
             }
             warName = '';
-        }              
+        }
     });
 
     // get the category name, launch function for loading clothes
