@@ -197,9 +197,6 @@ function displayImage(imgUri) {
 
 function setWardrobeName() {
     var name = prompt("Please enter wardrobe name, 10 characters max", "Ciuszki");
-    if (name == null) {
-        return;
-    }
     if (name == '') {
         alert("Enter valid name!");
         return;
@@ -280,7 +277,7 @@ function moveToWardrobeCats(getElement) {
 //get clicked name of wardrobe
 $('.hideWardrobeDraw').click(function (event) {
     wardrobeNameForDraw = $(event.target).text();
-    $("#putImgFromLottery").empty();
+     $("#putImgFromLottery").empty(); 
     getCityToDraw();
 
 });
@@ -378,6 +375,10 @@ $(document).on('pageshow', 'body', function () {
         $(".menu-wardrobe").empty();
         loadWardrobes();
     }
+    if (activePage == "favs-all")
+    {
+        getFavoritesSet();
+    }
 });
 
 //ask user to confirm delete
@@ -451,7 +452,7 @@ function getActualWeatherConditions(cityName) {
             zm = "15";
         }
         drawClothes(wardrobeNameForDraw, parseInt(zm), mainWeatherCondition);
-
+       
     }, 'json');
 
 }
@@ -472,10 +473,9 @@ randomAgain.addEventListener('click', function () {
     $("#putImgFromLottery").empty();
     getCityToDraw();
 });
+
 function drawClothes(wardrobeName, actualTemperature, actualWeatherCondition) {
 
-    getFavoritesSet();
-    $("#putImgFromLottery").empty();
 
     return firebase.database().ref('Users/' + getCurrentUser().uid + '/' + wardrobeName + '/').once('value', function (snapshot) {
         var postObject = snapshot.val();
@@ -486,50 +486,54 @@ function drawClothes(wardrobeName, actualTemperature, actualWeatherCondition) {
         generatedClothes = [];
 
         if (postObject["Headgear"] != null) {
-            // const generatedTopsObject = generateRandomClothObject(postObject, ["Headgear"], actualTemperature);
             generatedClothes.push(generateRandomClothObject(postObject, ["Headgear"], actualTemperature, actualWeatherCondition));
         }
-        if (postObject["Outerwear"] != null) {
-            // const generatedTopsObject = generateRandomClothObject(postObject, ["Outerwear"], actualTemperature);
+        if (postObject["Outerwear"] != null) {            
             generatedClothes.push(generateRandomClothObject(postObject, ["Outerwear"], actualTemperature, actualWeatherCondition));
 
         }
 
         //const onlyDresses = postObject["Dresses"] != null && postObject["Trousers"] == null && postObject["Skirts & Shorts"] == null && postObject["Tops"] == null && postObject["Tees & Sweaters"] == null;
         //const onlyTrousersOrSkirtsShortsAndTopsOrTeesSweaters = ((postObject["Trousers"] != null || postObject["Skirts & Shorts"] != null) && (postObject["Tops"] != null || postObject["Tees & Sweaters"] != null)) && postObject["Dresses"] == null;
-
-        var dress = (postObject["Dresses"] != null) ? true : false;
-        var trousers = (postObject["Trousers"] != null) ? true : false;
-        var skirtsShorts = (postObject["Skirts & Shorts"] != null) ? true : false;
-        var tops = (postObject["Tops"] != null) ? true : false;
-        var teesSweaters = (postObject["Tees & Sweaters"] != null) ? true : false;
-
-        if (dress && trousers == false && skirtsShorts == false && teesSweaters == false) {
-            generatedClothes.push(generateRandomClothObject(postObject, ["Dresses"], actualTemperature, actualWeatherCondition));
-        }
-        else if ((trousers || skirtsShorts) && (tops || teesSweaters) && dress == false) {
+        
+        var dress = (postObject["Dresses"] != null)? true : false;
+        var trousers = (postObject["Trousers"] != null)? true : false;
+        var skirtsShorts = (postObject["Skirts & Shorts"] != null)? true : false;
+        var tops = (postObject["Tops"] != null)? true : false;
+        var teesSweaters = (postObject["Tees & Sweaters"] != null)? true : false;
+       
+        if (dress && trousers == false && skirtsShorts == false && teesSweaters == false) 
+        {           
+            generatedClothes.push( generateRandomClothObject(postObject, ["Dresses"], actualTemperature, actualWeatherCondition) );
+        } 
+        else if ( (trousers || skirtsShorts)  && (tops || teesSweaters)  && dress == false ) 
+        {            
             generatedClothes.push(generateRandomClothObject(postObject, ["Tops", "Tees & Sweaters"], actualTemperature, actualWeatherCondition));
             generatedClothes.push(generateRandomClothObject(postObject, ["Trousers", "Skirts & Shorts"], actualTemperature, actualWeatherCondition));
 
-        }
-        else if (dress == false && trousers == false && skirtsShorts == false) {
+        } 
+        else if (dress == false && trousers == false && skirtsShorts == false) 
+        {
             alert("YOu don't have enough clothes added to draw from to actual weather conditions: " + actualTemperature + '°C ' + actualWeatherCondition);
             return;
-        }
-        else {
+        } 
+        else 
+        {
             const whatShouldIWear = Math.floor(Math.random() * 2);
-            if (whatShouldIWear == 0) {
+            if (whatShouldIWear == 0) {                
                 generatedClothes.push(generateRandomClothObject(postObject, ["Dresses"], actualTemperature, actualWeatherCondition));
 
-            }
-            else {
+            } 
+            else 
+            {                
                 generatedClothes.push(generateRandomClothObject(postObject, ["Tops", "Tees & Sweaters"], actualTemperature, actualWeatherCondition));
                 generatedClothes.push(generateRandomClothObject(postObject, ["Trousers", "Skirts & Shorts"], actualTemperature, actualWeatherCondition));
 
             }
         }
-        if (postObject["Footwear"] != null) {
-            generatedClothes.push(generateRandomClothObject(postObject, ["Footwear"], actualTemperature, actualWeatherCondition));
+        if (postObject["Footwear"] != null)
+        {
+            generatedClothes.push(generateRandomClothObject(postObject, ["Footwear"], actualTemperature, actualWeatherCondition));            
         }
 
         //Get all genereted clothes and put in slider
@@ -555,7 +559,7 @@ btnFavoriteSet.addEventListener('click', function () {
 
     updates['Users/' + getCurrentUser().uid + '/' + wardrobeNameForDraw + '/' + "favorites" + '/' + postKey] = postData;
     firebase.database().ref().update(updates);
-    alert('successful send');
+    alert('set added to favourites');
 });
 
 function generateRandomClothObject(postObject, categoryNames, actualTemperature, actualWeatherCondition) {
@@ -591,7 +595,7 @@ function generateRandomClothObject(postObject, categoryNames, actualTemperature,
 }
 
 function getFavoritesSet() {
-
+    console.log(wardrobeNameForDraw);
     return firebase.database().ref('Users/' + getCurrentUser().uid + '/' + wardrobeNameForDraw + '/').once('value', function (snapshot) {
         var postObject = snapshot.val();
         if (postObject === null) {
