@@ -47,8 +47,8 @@ btnSignUp.addEventListener('click', function () {
 
 //Login with email and password
 btnLogin.addEventListener('click', e => {
-    const email = "asiak995@gmail.com"; // txtEmailLogin.value;
-    const password = "gggggg"; // txtPasswordLogin.value;
+    const email =  txtEmailLogin.value;
+    const password = txtPasswordLogin.value;
     if (password == "" || email == "") {
         alert("Fill in all fields");
         return;
@@ -194,11 +194,16 @@ function displayImage(imgUri) {
 
 function setWardrobeName() {
     var name = prompt("Please enter wardrobe name, 10 characters max", "Ciuszki");
-    if (name == '' || name.length > 10) {
+    if (name == '')
+    {
         alert("Enter valid name!");
         return;
     }
-    warName = name;
+    if (name.length > 10) {
+        alert("10 characters max!");
+        return;
+    }
+    return name;
 }
 
 function uploadToDatabase(downloadURL) {
@@ -287,20 +292,10 @@ function loadWardrobes() {
         var warNum = Object.getOwnPropertyNames(postObject).toString();
         var wardrobeAmountArray = warNum.split(",");
 
-        for (var i = 1; i <= wardrobeAmountArray.length; i++) {
-            const img = $('<img />').attr({   // zrobić z tego może funkcje bo sie kod dubluje
-                'id': wardrobeAmountArray[i - 1],
-                'src': 'img/wardrobe.svg',
-                'class': 'myWardrobe',
-                'width': 96.55,
-                'height': 100,
-                'href': '#wardrobe-cats'
-            }).appendTo('.menu-wardrobe');
-
-            moveToWardrobeCats(wardrobeAmountArray[i - 1]);
-            text = $("<span></span>").text(wardrobeAmountArray[i - 1]);
-            $('.menu-wardrobe').append(text);
-
+        for (var i = 1; i <= wardrobeAmountArray.length; i++) {          
+            
+            $('.menu-wardrobe').append( createWardrobeImg(wardrobeAmountArray[i - 1]) );
+             moveToWardrobeCats( wardrobeAmountArray[i - 1] );
             // Add li to Draw wardrobe
             for (let x = 0; x < hideWardrobeDraw.length; x++) {
                 ul = document.createElement("ul");
@@ -338,16 +333,12 @@ function loadClothes() {
     if (isUserSignedIn == false)
         return;
 
-    console.log("UID: " + getCurrentUser().uid);
-    console.log("Wardobe: " + wardrobe);
-    console.log("Category: " + category);
     $("#putImage").empty();
     return firebase.database().ref('Users/' + getCurrentUser().uid + '/' + wardrobe + '/' + category + '/').once('value', function (snapshot) {
         var postObject = snapshot.val();
         console.log(snapshot);
         if (postObject === null)
             return;
-
 
         var keys = Object.keys(postObject);
         for (var i = 0; i < keys.length; i++) {
@@ -408,7 +399,7 @@ function tapImage(event) {
     }
 }
 
-function deleteWardrobe(wardrobeID) {
+function deleteWardrobe(wardrobeID) { 
     var ref = firebase.database().ref('Users/' + getCurrentUser().uid + '/' + wardrobeID + '/');
     ref.remove()
         .then(function () {
@@ -419,11 +410,12 @@ function deleteWardrobe(wardrobeID) {
         });
 }
 
-function tapWardrobe(event) {
+function tapWardrobe(event) { 
     if (deleteDecision()) {
         var wardrobeID = $(this).attr("id");
         $('#' + wardrobeID).get(0).nextSibling.remove(); // deleting span with wardrobe name
-        $("#" + wardrobeID).remove();
+        $("#" + wardrobeID).parent().remove();
+        $("." + wardrobeID).remove();
         deleteWardrobe(wardrobeID);
     }
 }
@@ -571,6 +563,21 @@ function generateRandomClothObject(postObject, categoryNames, actualTemperature,
     const randomClothIndex = Math.floor(Math.random() * clothesAvailableForTemperature.length);
     return postObject[clothesAvailableForTemperature[randomClothIndex]["category"]][clothesAvailableForTemperature[randomClothIndex]["key"]];
 }
+
+ function createWardrobeImg(name) {
+        return $('<div/>') 
+            .append($('<img />').attr({
+                'id': name,
+                'src': 'img/wardrobe.svg',
+                'class': 'myWardrobe',
+                'href': '#wardrobe-cats',
+                
+            }))
+            .append($('<div/>')
+                .append(name));
+    }
+
+
 //Mobile navigation
 $(document).ready(function () {
 
@@ -587,30 +594,25 @@ $(document).ready(function () {
         $(".btnFloatingAction").slideToggle();
     });
 
+   
+
     // display wardrobe with given name
     $('.btn-war').click(function () {
-        setWardrobeName();
+        warName = setWardrobeName();
         const checkName = document.getElementById(warName);
         if (checkName !== null) {
             alert('This name already exist!');
             return;
-        } else if (warName == '' || warName.length > 10) {
+        }
+        else if (warName == '' )
+        {
             return;
-        } else {
+        } 
+        else 
+        {
             warName = warName.replace(/\s/g, '');
-            const img = $('<img />').attr({
-                'id': warName,
-                'src': 'img/wardrobe.svg',
-                'class': 'myWardrobe',
-                'width': 96.55,
-                'height': 100,
-                'href': '#wardrobe-cats'
-            }).appendTo('.menu-wardrobe');
-
-            $('.menu-wardrobe').append(warName);
-            moveToWardrobeCats(warName);
-
-
+            $('.menu-wardrobe').append(createWardrobeImg(warName));
+            moveToWardrobeCats(warName);            
             for (let x = 0; x < hideWardrobeDraw.length; x++) {
                 ul = document.createElement("ul");
                 ul.classList.add("hideShowWardrobe");
@@ -629,9 +631,8 @@ $(document).ready(function () {
                 li.appendChild(a);
             }
             warName = '';
-        }
+        }              
     });
-
 
     // get the category name, launch function for loading clothes
     $('#wear span').click(function () {
@@ -815,8 +816,8 @@ $(document).ready(function () {
                     }
                 }
             })
-        };
+        }
 
-    };
+    }
 
 });
