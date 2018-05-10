@@ -217,7 +217,7 @@ function uploadToDatabase(downloadURL) {
         category: selectedCategory,
         minTemp: minTemp,
         maxTemp: maxTemp,
-        weather: { selectedWeather }
+        selectedWeather
     };
     updates['Users/' + getCurrentUser().uid + '/' + wardrobe + '/' + selectedCategory + '/' + postKey] = postData;
     firebase.database().ref().update(updates);
@@ -483,7 +483,7 @@ function drawClothes(wardrobeName, actualTemperature) {
         if (postObject === null) {
             return;
         }
-
+        console.log(postObject["Headgear"]);
         const generatedClothes = [];
 
         if (postObject["Headgear"] != null) {
