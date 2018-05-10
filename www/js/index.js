@@ -374,6 +374,10 @@ $(document).on('pageshow', 'body', function () {
         $(".menu-wardrobe").empty();
         loadWardrobes();
     }
+    if (activePage == "favs-all")
+    {
+        getFavoritesSet();
+    }
 });
 
 //ask user to confirm delete
@@ -468,10 +472,9 @@ randomAgain.addEventListener('click', function () {
     $("#putImgFromLottery").empty();
     getCityToDraw();
 });
+
 function drawClothes(wardrobeName, actualTemperature, actualWeatherCondition) {
 
-    getFavoritesSet();
-    $("#putImgFromLottery").empty();
 
     return firebase.database().ref('Users/' + getCurrentUser().uid + '/' + wardrobeName + '/').once('value', function (snapshot) {
         var postObject = snapshot.val();
@@ -482,11 +485,9 @@ function drawClothes(wardrobeName, actualTemperature, actualWeatherCondition) {
         generatedClothes = [];
 
         if (postObject["Headgear"] != null) {
-            // const generatedTopsObject = generateRandomClothObject(postObject, ["Headgear"], actualTemperature);
             generatedClothes.push(generateRandomClothObject(postObject, ["Headgear"], actualTemperature, actualWeatherCondition));
         }
-        if (postObject["Outerwear"] != null) {
-            // const generatedTopsObject = generateRandomClothObject(postObject, ["Outerwear"], actualTemperature);
+        if (postObject["Outerwear"] != null) {            
             generatedClothes.push(generateRandomClothObject(postObject, ["Outerwear"], actualTemperature, actualWeatherCondition));
 
         }
@@ -557,7 +558,7 @@ btnFavoriteSet.addEventListener('click', function () {
 
     updates['Users/' + getCurrentUser().uid + '/' + wardrobeNameForDraw + '/' + "favorites" + '/' + postKey] = postData;
     firebase.database().ref().update(updates);
-    alert('successful send');
+    alert('set added to favourites');
 });
 
 function generateRandomClothObject(postObject, categoryNames, actualTemperature, actualWeatherCondition) {
@@ -593,6 +594,7 @@ function generateRandomClothObject(postObject, categoryNames, actualTemperature,
 }
 
 function getFavoritesSet() {
+    console.log(wardrobeNameForDraw);
     return firebase.database().ref('Users/' + getCurrentUser().uid + '/' + wardrobeNameForDraw + '/').once('value', function (snapshot) {
         var postObject = snapshot.val();
         if (postObject === null) {
