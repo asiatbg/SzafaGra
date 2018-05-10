@@ -645,6 +645,9 @@ span.fa-plus {
 .btn-link:hover {
   text-decoration: none;
 }
+.marginBottom {
+    margin-bottom: 35%;
+}
 
 .styled-select {
     overflow: hidden;

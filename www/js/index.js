@@ -217,7 +217,7 @@ function uploadToDatabase(downloadURL) {
         category: selectedCategory,
         minTemp: minTemp,
         maxTemp: maxTemp,
-        weather: selectedWeather
+        weather: { selectedWeather }
     };
     updates['Users/' + getCurrentUser().uid + '/' + wardrobe + '/' + selectedCategory + '/' + postKey] = postData;
     firebase.database().ref().update(updates);
@@ -250,7 +250,7 @@ function uploadToStorage(imgUri) {
 }
 
 btnAcceptImage.addEventListener('click', function () {
-    // console.log(getValueOfSelect());
+    getValueOfSelect();
     const imgUri = document.getElementById('addedImg').src;
     uploadToStorage(imgUri);
     window.location.href = '#wardrobe-cats';
@@ -458,13 +458,21 @@ function getActualWeatherConditions(cityName) {
 
 }
 
-// function getValueOfSelect() {
-//     var selectWeather = document.getElementsByClassName('selectWeather');
-//     for (let x = 0; x < selectWeather.length; x++) {
-//         selectedWeather.push(selectWeather[x].value);
-//     }
-//     return selectedWeather;
-// }
+function getValueOfSelect() {
+    selectedWeather = [];
+    var selectWeather = document.getElementsByClassName('selectWeather');
+    for (let x = 0; x < selectWeather.length; x++) {
+        if (selectWeather[x].value != null) {
+            selectedWeather.push(selectWeather[x].value);
+            console.log("Get value of selectWeather " + selectWeather[x].value);
+            console.log("Get value of x: " + x);
+        }
+
+    }
+    console.log("Print selectedWeather: " + selectedWeather);
+
+    return selectedWeather;
+}
 const randomAgain = document.getElementById('randomAgain');
 randomAgain.addEventListener('click', function () {
     drawClothes(wardrobeNameForDraw);
@@ -522,13 +530,14 @@ function drawClothes(wardrobeName, actualTemperature) {
         }
 
         var img;
-        const putImgFromLottery = document.getElementById('putImgFromLottery');
+        const putImgFromLottery = document.getElementsByClassName('slide');
         for (var i = 0; i < generatedClothes.length; i++) {
 
             img = document.createElement("img");
             img.src = generatedClothes[i]["url"];
             // ul.classList.add("hideShowWardrobe");
-            putImgFromLottery.appendChild(img);
+            console.log(putImgFromLottery[i]);
+            putImgFromLottery[i].appendChild(img);
         }
 
     });
@@ -551,6 +560,11 @@ function generateRandomClothObject(postObject, categoryNames, actualTemperature)
             }
         }
     }
+
+    // for (var j = 0; j < clothesAvailableForTemperature.length; j++) {
+    //     console.log(postObject[clothesAvailableForTemperature[j]["category"][clothesAvailableForTemperature[j]["url"]]]);
+    //     console.log(clothesAvailableForTemperature[j]["url"]);
+    // }
 
     const randomClothIndex = Math.floor(Math.random() * clothesAvailableForTemperature.length);
     return postObject[clothesAvailableForTemperature[randomClothIndex]["category"]][clothesAvailableForTemperature[randomClothIndex]["key"]];
@@ -629,12 +643,11 @@ $(document).ready(function () {
     });
 
     // get the selected by user weather
-    $('#selectWeather').change(function () {
-        selectedWeather = $('#selectWeather').val();
-        console.log(selectedWeather);
+    // $('#selectWeather').change(function () {
+    //     selectedWeather = $('#selectWeather').val();
+    //     console.log(selectedWeather);
 
-    });
-
+    // });
 
 
     //dodawanie list z tagami do zdjecia
@@ -643,32 +656,34 @@ $(document).ready(function () {
         return $("div.col-xs-2").length;
     };
     var newInput = function () {
-        var div = $("<div/>", {
+        const div = $("<div/>", {
             "class": "input-group styled-select oneline"
         });
-        var input = $("<select><option>Select</option><option>Rain</option><option>Thunderstorm</option><option>Drizzle</option><option>Snow</option><option>Clear</option><option>Clouds</option></select>", {
-            "class": "form-control selectWeather",
-            "name": "",
+        const select = $("<select />", {
+            "class": "form-control selectWeather"
         });
+        const selectOption = $("<option>Select</option><option>Rain</option><option>Thunderstorm</option><option>Drizzle</option><option>Snow</option><option>Clear</option><option>Clouds</option>");
+
         var span = $("<span/>", {
             "class": "input-group-btn"
         });
-        var button = $("<button/>", {
+        const button = $("<button/>", {
             "class": "removeBtn btn btn-sm btn-link",
             type: "button",
             id: n()
         });
-        var glyph = $("<span/>", {
+        const glyph = $("<span/>", {
             "class": "fas fa-times"
         });
-        var col = $("<div/>", {
+        const col = $("<div/>", {
             "class": "form-group col-xs-2",
             id: "newInput-" + n()
         });
 
         $(glyph).appendTo(button);
         $(button).appendTo(span);
-        $(input).appendTo(div);
+        $(select).appendTo(div);
+        $(selectOption).appendTo(select);
         $(span).appendTo(div);
         $(div).appendTo(col);
         return col;
@@ -682,6 +697,8 @@ $(document).ready(function () {
         var target = $("#target").find("#newInput-" + this.id);
         $(target).remove();
     });
+
+
 
     // get data for chart
     var dateUTC = [];
