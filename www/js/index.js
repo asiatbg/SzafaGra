@@ -585,6 +585,19 @@ $(document).ready(function () {
         $(".btnFloatingAction").slideToggle();
     });
 
+    function createWardrobeImg(name) {
+        return $('<div/>') 
+            .append($('<img />').attr({
+                'id': name,
+                'src': 'img/wardrobe.svg',
+                'class': 'myWardrobe',
+                'href': '#wardrobe-cats',
+                
+            }))
+            .append($('<div/>')
+                .append(name));
+    }
+
     // display wardrobe with given name
     $('.btn-war').click(function () {
         setWardrobeName();
@@ -596,17 +609,11 @@ $(document).ready(function () {
             return;
         } else {
             warName = warName.replace(/\s/g, '');
-            const img = $('<img />').attr({
-                'id': warName,
-                'src': 'img/wardrobe.svg',
-                'class': 'myWardrobe',
-                'width': 96.55,
-                'height': 100,
-                'href': '#wardrobe-cats'
-            }).appendTo('.menu-wardrobe');
-
-            $('.menu-wardrobe').append(warName);
+            $('.menu-wardrobe').append(createWardrobeImg(warName));
             moveToWardrobeCats(warName);
+            warName = '';
+        }
+    });
 
 
             for (let x = 0; x < hideWardrobeDraw.length; x++) {
@@ -628,7 +635,7 @@ $(document).ready(function () {
             }
             warName = '';
         }
-    });
+    ,)
 
 
     // get the category name, launch function for loading clothes
@@ -816,5 +823,3 @@ $(document).ready(function () {
         };
 
     };
-
-});
