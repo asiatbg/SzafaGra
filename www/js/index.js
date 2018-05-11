@@ -3,7 +3,6 @@ function init() {
 }
 
 function onDeviceReady() {
-    console.log(navigator.camera);
 }
 const btnLogin = document.getElementById('btnLogin');
 const txtEmailLogin = document.getElementById('txtEmailLogin');
@@ -25,7 +24,7 @@ let generatedClothes = [];
 let favoritesSetUrl = [];
 var wardrobe, category, warName, selectedCategory, selectedWeather = [], ul, li, snippet, a, text;
 let wardrobeNameForDraw = "";
-var ulFav, liFav, snippetFav, aFav; 
+var ulFav, liFav, snippetFav, aFav;
 // Sign up with email and password
 btnSignUp.addEventListener('click', function () {
     const email = txtEmailRegistration.value;
@@ -141,8 +140,8 @@ function btnDraw() {
 
 }
 
-function btnFav(){
-	for (let i = 0; i < hideFavouriteSet.length; i++) {
+function btnFav() {
+    for (let i = 0; i < hideFavouriteSet.length; i++) {
         if (hideFavouriteSet[i].style.display === "block") {
             hideFavouriteSet[i].style.display = "none";
         } else {
@@ -288,36 +287,37 @@ function moveToWardrobeCats(getElement) {
 //get clicked name of wardrobe
 $('.hideWardrobeDraw').click(function (event) {
     wardrobeNameForDraw = $(event.target).text();
-     $("#putImgFromLottery").empty(); 
+    $("#putImgFromLottery").empty();
     getCityToDraw();
 
 });
 
 $('.hideFavouriteSet').click(function (event) {
     wardrobeNameForFav = $(event.target).text();
+    $("#putImgFavourites").empty();
     getFavoritesSet(wardrobeNameForFav);
 
 });
 
-function loadToNavbar(element, array, HTMLClass, link){
-	for (var i = 0; i < element.length; i++) {
-                ul = document.createElement("ul");
-                ul.classList.add(HTMLClass);
-  
-                hideWardrobeDraw[i].appendChild(ul);
+function loadToNavbar(element, array, HTMLClass, link) {
+    for (var i = 0; i < element.length; i++) {
+        ul = document.createElement("ul");
+        ul.classList.add(HTMLClass);
 
-                // Put li and a tags into ul in div
-                li = document.createElement("li");
-                snippet = document.createTextNode(array[i - 1]);
+        hideWardrobeDraw[i].appendChild(ul);
 
-                li.classList.add(array[i - 1]);
-                ul.appendChild(li);
+        // Put li and a tags into ul in div
+        li = document.createElement("li");
+        snippet = document.createTextNode(array[i - 1]);
 
-                a = document.createElement('a');
-                a.href = link;
-                a.appendChild(snippet);
-                li.appendChild(a);
-            }
+        li.classList.add(array[i - 1]);
+        ul.appendChild(li);
+
+        a = document.createElement('a');
+        a.href = link;
+        a.appendChild(snippet);
+        li.appendChild(a);
+    }
 };
 
 
@@ -325,8 +325,9 @@ function loadToNavbar(element, array, HTMLClass, link){
 function loadWardrobes() {
     $(".hideWardrobeDraw").empty();
     $(".hideShowFavourites").empty();
-    if (isUserSignedIn == false)
+    if (isUserSignedIn == false) {
         return;
+    }
 
     return firebase.database().ref('Users/' + getCurrentUser().uid + '/').once('value').then(function (snapshot) {
         var postObject = snapshot.val();
@@ -345,7 +346,7 @@ function loadWardrobes() {
             for (let x = 0; x < hideWardrobeDraw.length; x++) {
                 ul = document.createElement("ul");
                 ul.classList.add("hideShowWardrobe");
-  
+
                 hideWardrobeDraw[x].appendChild(ul);
 
                 // Put li and a tags into ul in div
@@ -362,7 +363,7 @@ function loadWardrobes() {
             }
             // Add li to favourites 
             for (var j = 0; j < hideFavouriteSet.length; j++) {
-            	
+
                 ulFav = document.createElement("ul");
                 ulFav.classList.add("hideShowFavourites");
                 hideFavouriteSet[j].appendChild(ulFav);
@@ -380,7 +381,7 @@ function loadWardrobes() {
                 liFav.appendChild(aFav);
             }
 
-             
+
         }
     });
 }
@@ -397,16 +398,16 @@ function isUserSignedIn() {
 
 // download and display clothes for particular wardrobe and category
 function loadClothes() {
-    if (isUserSignedIn == false)
+    if (isUserSignedIn == false) {
         return;
+    }
 
     $("#putImage").empty();
     return firebase.database().ref('Users/' + getCurrentUser().uid + '/' + wardrobe + '/' + category + '/').once('value', function (snapshot) {
         var postObject = snapshot.val();
-        console.log(snapshot);
-        if (postObject === null)
+        if (postObject === null) {
             return;
-
+        }
         var keys = Object.keys(postObject);
         for (var i = 0; i < keys.length; i++) {
             var currentObj = postObject[keys[i]];
@@ -437,8 +438,7 @@ $(document).on('pageshow', 'body', function () {
         $(".menu-wardrobe").empty();
         loadWardrobes();
     }
-    if (activePage == "favs-all")
-    {
+    if (activePage == "favs-all") {
         getFavoritesSet();
     }
 });
@@ -446,9 +446,9 @@ $(document).on('pageshow', 'body', function () {
 //ask user to confirm delete
 function deleteDecision() {
     var decision = confirm("Are you sure, you want to delete it?");
-    if (decision == true)
+    if (decision == true) {
         return true;
-
+    }
     return false;
 }
 
@@ -514,7 +514,7 @@ function getActualWeatherConditions(cityName) {
             zm = "15";
         }
         drawClothes(wardrobeNameForDraw, parseInt(zm), mainWeatherCondition);
-       
+
     }, 'json');
 
 }
@@ -550,52 +550,46 @@ function drawClothes(wardrobeName, actualTemperature, actualWeatherCondition) {
         if (postObject["Headgear"] != null) {
             generatedClothes.push(generateRandomClothObject(postObject, ["Headgear"], actualTemperature, actualWeatherCondition));
         }
-        if (postObject["Outerwear"] != null) {            
+        if (postObject["Outerwear"] != null) {
             generatedClothes.push(generateRandomClothObject(postObject, ["Outerwear"], actualTemperature, actualWeatherCondition));
 
         }
 
         //const onlyDresses = postObject["Dresses"] != null && postObject["Trousers"] == null && postObject["Skirts & Shorts"] == null && postObject["Tops"] == null && postObject["Tees & Sweaters"] == null;
         //const onlyTrousersOrSkirtsShortsAndTopsOrTeesSweaters = ((postObject["Trousers"] != null || postObject["Skirts & Shorts"] != null) && (postObject["Tops"] != null || postObject["Tees & Sweaters"] != null)) && postObject["Dresses"] == null;
-        
-        var dress = (postObject["Dresses"] != null)? true : false;
-        var trousers = (postObject["Trousers"] != null)? true : false;
-        var skirtsShorts = (postObject["Skirts & Shorts"] != null)? true : false;
-        var tops = (postObject["Tops"] != null)? true : false;
-        var teesSweaters = (postObject["Tees & Sweaters"] != null)? true : false;
-       
-        if (dress && trousers == false && skirtsShorts == false && tops == false && teesSweaters == false) 
-        {           
-            generatedClothes.push( generateRandomClothObject(postObject, ["Dresses"], actualTemperature, actualWeatherCondition) );
-        } 
-        else if ( (trousers || skirtsShorts)  && (tops || teesSweaters)  && dress == false ) 
-        {            
+
+        var dress = (postObject["Dresses"] != null) ? true : false;
+        var trousers = (postObject["Trousers"] != null) ? true : false;
+        var skirtsShorts = (postObject["Skirts & Shorts"] != null) ? true : false;
+        var tops = (postObject["Tops"] != null) ? true : false;
+        var teesSweaters = (postObject["Tees & Sweaters"] != null) ? true : false;
+
+        if (dress && trousers == false && skirtsShorts == false && tops == false && teesSweaters == false) {
+            generatedClothes.push(generateRandomClothObject(postObject, ["Dresses"], actualTemperature, actualWeatherCondition));
+        }
+        else if ((trousers || skirtsShorts) && (tops || teesSweaters) && dress == false) {
             generatedClothes.push(generateRandomClothObject(postObject, ["Tops", "Tees & Sweaters"], actualTemperature, actualWeatherCondition));
             generatedClothes.push(generateRandomClothObject(postObject, ["Trousers", "Skirts & Shorts"], actualTemperature, actualWeatherCondition));
 
-        } 
-        else if (dress == false && trousers == false && skirtsShorts == false) 
-        {
+        }
+        else if (dress == false && trousers == false && skirtsShorts == false) {
             alert("You don't have enough clothes added to draw from to actual weather conditions: " + actualTemperature + '°C ' + actualWeatherCondition);
             return;
-        } 
-        else 
-        {
+        }
+        else {
             const whatShouldIWear = Math.floor(Math.random() * 2);
-            if (whatShouldIWear == 0) {                
+            if (whatShouldIWear == 0) {
                 generatedClothes.push(generateRandomClothObject(postObject, ["Dresses"], actualTemperature, actualWeatherCondition));
 
-            } 
-            else 
-            {                
+            }
+            else {
                 generatedClothes.push(generateRandomClothObject(postObject, ["Tops", "Tees & Sweaters"], actualTemperature, actualWeatherCondition));
                 generatedClothes.push(generateRandomClothObject(postObject, ["Trousers", "Skirts & Shorts"], actualTemperature, actualWeatherCondition));
 
             }
         }
-        if (postObject["Footwear"] != null)
-        {
-            generatedClothes.push(generateRandomClothObject(postObject, ["Footwear"], actualTemperature, actualWeatherCondition));            
+        if (postObject["Footwear"] != null) {
+            generatedClothes.push(generateRandomClothObject(postObject, ["Footwear"], actualTemperature, actualWeatherCondition));
         }
 
         //Get all genereted clothes and put in slider
@@ -652,12 +646,11 @@ function generateRandomClothObject(postObject, categoryNames, actualTemperature,
     const randomClothIndex = Math.floor(Math.random() * clothesAvailableForTemperature.length);
     return postObject[clothesAvailableForTemperature[randomClothIndex]["category"]][clothesAvailableForTemperature[randomClothIndex]["key"]];
 }
- 
+
 function getFavoritesSet(wardrobeNameForFav) {
-	$("#putImgFavourites").empty();
-	var favImg;
+    var favImg;
     const putImgFav = document.getElementById('putImgFavourites');
-    
+
     return firebase.database().ref('Users/' + getCurrentUser().uid + '/' + wardrobeNameForFav + '/').once('value', function (snapshot) {
         var postObject = snapshot.val();
         if (postObject === null) {
@@ -667,16 +660,13 @@ function getFavoritesSet(wardrobeNameForFav) {
         for (var i = 0; i < favoritesObjectKeys.length; i++) {
 
             actualObject = postObject["favorites"][favoritesObjectKeys[i]];
-            console.log(postObject["favorites"][favoritesObjectKeys[i]]);
 
             for (var j = 0; j < actualObject.length; j++) {
 
-                favoritesSetUrl.push(actualObject[j]["url"]);
-                console.log(actualObject[j]["url"]);
-				favImg = document.createElement("img");
-				favImg.src = actualObject[j]["url"];
-				favImg.classList.add("contentImage");
-				putImgFav.appendChild(favImg);
+                favImg = document.createElement("img");
+                favImg.src = actualObject[j]["url"];
+                favImg.classList.add("contentImage");
+                putImgFav.appendChild(favImg);
             }
 
         }
@@ -706,7 +696,7 @@ $(document).ready(function () {
         var id = $(event.target).attr("class");
         if (id != "Draw" && id != "favourites") {
             $('.nav').toggleClass('active');
-        }  
+        }
     });
 
     //diplaying options to get picture from
@@ -748,19 +738,19 @@ $(document).ready(function () {
                 a.appendChild(snippet);
                 li.appendChild(a);
             }
-            
+
             for (var j = 0; j < hideFavouriteSet.length; j++) {
-            	// favvvvv
+                // favvvvv
                 ulFav = document.createElement("ul");
                 ulFav.classList.add("hideShowFavourites");
-  
+
                 hideFavouriteSet[j].appendChild(ulFav);
 
                 // Put li and a tags into ul in div
                 liFav = document.createElement("li");
-                snippetFav = document.createTextNode( warName);
+                snippetFav = document.createTextNode(warName);
 
-                liFav.classList.add( warName);
+                liFav.classList.add(warName);
                 ulFav.appendChild(liFav);
 
                 aFav = document.createElement('a');
@@ -782,14 +772,6 @@ $(document).ready(function () {
     $('#selectCategory').change(function () {
         selectedCategory = $('#selectCategory').val();
     });
-
-    // get the selected by user weather
-    // $('#selectWeather').change(function () {
-    //     selectedWeather = $('#selectWeather').val();
-    //     console.log(selectedWeather);
-
-    // });
-
 
     //dodawanie list z tagami do zdjecia
     var target = $("div#target");
